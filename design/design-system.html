@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design System — Đập Chuột</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  /* ---------- Nền tảng ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--color-link); text-decoration: none; }
+  a:hover { color: var(--color-link-hover); text-decoration: underline; }
+  :focus-visible { outline: none; box-shadow: var(--ring-focus); }
+
+  .container { max-width: var(--container-max); margin: 0 auto; padding: 0 var(--space-6); }
+
+  header.top {
+    border-bottom: var(--border-width) solid var(--color-border);
+    background: var(--color-bg-sunken);
+    position: sticky; top: 0; z-index: 10;
+  }
+  header.top .container { display: flex; align-items: center; gap: var(--space-6); height: 64px; }
+  .brand { font-weight: var(--weight-bold); font-size: var(--text-lg); color: var(--color-text); }
+  .brand span { color: var(--color-accent); }
+  header.top nav { display: flex; gap: var(--space-5); margin-left: auto; flex-wrap: wrap; }
+  header.top nav a { color: var(--color-text-muted); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+  header.top nav a:hover { color: var(--color-text); text-decoration: none; }
+
+  .hero { padding: var(--space-20) 0 var(--space-16); }
+  .eyebrow {
+    display: inline-block; font-size: var(--text-xs); font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--color-accent);
+    margin-bottom: var(--space-4);
+  }
+  h1 {
+    font-size: var(--text-4xl); line-height: var(--leading-4xl);
+    font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight);
+    margin: 0 0 var(--space-5); max-width: 18ch;
+  }
+  .lead { font-size: var(--text-lg); line-height: var(--leading-lg); color: var(--color-text-muted); max-width: 60ch; margin: 0; }
+
+  section.block { padding: var(--space-12) 0; border-top: var(--border-width) solid var(--color-border); }
+  h2 { font-size: var(--text-2xl); line-height: var(--leading-2xl); font-weight: var(--weight-bold); margin: 0 0 var(--space-2); }
+  .block > .container > p.desc { color: var(--color-text-muted); margin: 0 0 var(--space-8); max-width: 70ch; }
+  h3 { font-size: var(--text-sm); line-height: var(--leading-sm); font-weight: var(--weight-semibold);
+       letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--color-text-muted);
+       margin: var(--space-8) 0 var(--space-4); }
+  code { font-family: var(--font-mono); font-size: 0.875em; color: var(--orange-300);
+         background: var(--color-bg-sunken); padding: 1px 6px; border-radius: var(--radius-sm); }
+
+  .grid { display: grid; gap: var(--space-6); }
+  .grid-swatch { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+
+  /* ---------- Bảng màu ---------- */
+  .swatch { border: var(--border-width) solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; background: var(--color-surface); }
+  .swatch .chip { height: 72px; border-bottom: var(--border-width) solid var(--color-border); }
+  .swatch .meta { padding: var(--space-3) var(--space-4); }
+  .swatch .name { font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+  .swatch .val { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted); }
+
+  /* ---------- Kiểu chữ ---------- */
+  .type-row { display: grid; grid-template-columns: 140px 1fr; gap: var(--space-6); align-items: baseline;
+              padding: var(--space-4) 0; border-bottom: var(--border-width) solid var(--color-border); }
+  .type-row .spec { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted); }
+
+  /* ---------- Thành phần: Nút ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    min-height: var(--control-h-md); padding: var(--btn-pad-y) var(--btn-pad-x);
+    border: var(--border-width) solid transparent; border-radius: var(--radius-md);
+    font: inherit; font-size: var(--text-base); line-height: 1; font-weight: var(--weight-semibold);
+    cursor: pointer; transition: background var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary { background: var(--color-accent); color: var(--color-on-accent); }
+  .btn-primary:hover { background: var(--color-accent-hover); }
+  .btn-primary:active { background: var(--color-accent-active); }
+  .btn-secondary { background: var(--gray-700); color: var(--color-text); }
+  .btn-secondary:hover { background: var(--gray-600); }
+  .btn-ghost { background: transparent; color: var(--color-text); border-color: var(--color-border); }
+  .btn-ghost:hover { background: var(--color-surface-hover); }
+  .btn-link { background: none; color: var(--color-link); padding-left: 0; padding-right: 0; }
+  .btn-link:hover { color: var(--color-link-hover); text-decoration: underline; }
+  .btn-sm { min-height: var(--control-h-sm); padding: 6px var(--space-3); font-size: var(--text-sm); }
+  .btn-lg { min-height: var(--control-h-lg); padding: 14px 32px; font-size: var(--text-lg); }
+  .btn[disabled] { opacity: 0.45; cursor: not-allowed; transform: none; }
+  .btn-icon { width: var(--control-h-md); padding: 0; }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
+
+  /* ---------- Thành phần: Ô nhập ---------- */
+  .field { display: grid; gap: var(--space-2); }
+  .field label { font-size: var(--text-sm); font-weight: var(--weight-medium); }
+  .field .hint { font-size: var(--text-xs); line-height: var(--leading-xs); color: var(--color-text-muted); }
+  .field .hint.error { color: var(--color-danger); }
+  .input, .select {
+    height: var(--control-h-md); padding: 0 var(--space-3);
+    background: var(--color-surface); color: var(--color-text);
+    border: var(--border-width) solid var(--color-border); border-radius: var(--radius-md);
+    font: inherit; font-size: var(--text-base); width: 100%;
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+  .input::placeholder { color: var(--color-text-subtle); }
+  .input:hover, .select:hover { border-color: var(--color-border-strong); }
+  .input:focus, .select:focus { outline: none; border-color: var(--color-focus); box-shadow: var(--ring-focus); }
+  .input.is-error { border-color: var(--color-danger); }
+  .input[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .toggle { display: inline-flex; align-items: center; gap: var(--space-3); cursor: pointer; font-size: var(--text-sm); }
+  .toggle input { appearance: none; width: 40px; height: 22px; border-radius: var(--radius-full);
+                  background: var(--gray-700); position: relative; cursor: pointer; margin: 0;
+                  transition: background var(--duration-base) var(--ease-out); }
+  .toggle input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px;
+                         border-radius: 50%; background: var(--white); transition: transform var(--duration-base) var(--ease-out); }
+  .toggle input:checked { background: var(--color-accent); }
+  .toggle input:checked::after { transform: translateX(18px); }
+
+  /* ---------- Thành phần: Thẻ ---------- */
+  .card {
+    background: var(--color-surface); border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-md);
+  }
+  .card h4 { margin: 0 0 var(--space-2); font-size: var(--text-lg); line-height: var(--leading-lg); }
+  .card p { margin: 0; color: var(--color-text-muted); font-size: var(--text-sm); line-height: var(--leading-sm); }
+  .card.is-interactive { transition: border-color var(--duration-fast), transform var(--duration-fast) var(--ease-out); cursor: pointer; }
+  .card.is-interactive:hover { border-color: var(--color-border-strong); transform: translateY(-2px); }
+  .card .footer { margin-top: var(--space-5); display: flex; gap: var(--space-3); }
+  .stat .label { font-size: var(--text-xs); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--color-text-muted); font-weight: var(--weight-semibold); }
+  .stat .value { font-size: var(--text-3xl); line-height: var(--leading-3xl); font-weight: var(--weight-bold); font-variant-numeric: tabular-nums; }
+  .stat .value.accent { color: var(--color-accent); }
+  .stat .value.low { color: var(--game-timer-low); }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px;
+           border-radius: var(--radius-full); font-size: var(--text-xs); font-weight: var(--weight-semibold);
+           background: var(--color-bg-sunken); border: var(--border-width) solid var(--color-border); color: var(--color-text-muted); }
+  .badge.accent { background: var(--color-accent-soft); border-color: transparent; color: var(--orange-300); }
+  .badge.success { color: var(--color-success); }
+  .badge.combo { background: var(--game-combo); color: var(--gray-950); border-color: transparent; }
+
+  /* ---------- Xem trước bảng chơi ---------- */
+  .board {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--game-gap);
+    width: min(100%, 320px); aspect-ratio: 1; padding: var(--space-4);
+    background: var(--color-bg-sunken); border: var(--border-width) solid var(--color-border); border-radius: var(--radius-xl);
+  }
+  .hole { position: relative; border-radius: 50%; background: var(--game-hole);
+          box-shadow: inset 0 6px 0 var(--game-hole-rim); overflow: hidden; }
+  .mole { position: absolute; left: 18%; right: 18%; bottom: -6%; height: 72%;
+          background: var(--game-mole); border-radius: 50% 50% 40% 40%; }
+  .mole::before, .mole::after { content: ""; position: absolute; top: 30%; width: 12%; height: 14%; border-radius: 50%; background: var(--gray-950); }
+  .mole::before { left: 28%; } .mole::after { right: 28%; }
+  .mole.hit { background: var(--game-mole-hit); }
+
+  /* ---------- Khoảng cách & bo góc ---------- */
+  .scale-row { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-2) 0; }
+  .scale-row .tok { width: 110px; font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted); }
+  .scale-row .bar { height: 12px; background: var(--color-accent); border-radius: 2px; }
+  .radius-box { width: 88px; height: 88px; background: var(--color-surface); border: 2px solid var(--color-accent); }
+
+  footer { padding: var(--space-12) 0; color: var(--color-text-subtle); font-size: var(--text-sm); border-top: var(--border-width) solid var(--color-border); }
+
+  @media (max-width: 640px) {
+    h1 { font-size: var(--text-3xl); line-height: var(--leading-3xl); }
+    .type-row { grid-template-columns: 1fr; gap: var(--space-1); }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="container">
+    <div class="brand">Đập <span>Chuột</span></div>
+    <nav aria-label="Mục lục">
+      <a href="#mau">Màu</a>
+      <a href="#chu">Kiểu chữ</a>
+      <a href="#nut">Nút</a>
+      <a href="#nhap">Ô nhập</a>
+      <a href="#the">Thẻ</a>
+      <a href="#khoang-cach">Khoảng cách</a>
+      <a href="../docs/index.html">Tài liệu →</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <span class="eyebrow">Design system · v1.0</span>
+      <h1>Một ngôn ngữ hình ảnh cho game Đập Chuột</h1>
+      <p class="lead">Nền tối, một màu cam để gọi hành động, xanh trời cho liên kết. Mọi giá trị lấy từ <code>tokens.css</code>; trang này chỉ để xem trước, không có code game.</p>
+    </div>
+  </section>
+
+  <!-- ============ MÀU ============ -->
+  <section class="block" id="mau">
+    <div class="container">
+      <h2>Bảng màu</h2>
+      <p class="desc">Giao diện chủ yếu là các bậc xám than. Cam chỉ dùng cho hành động chính và điểm nhấn trong game, không dùng để trang trí.</p>
+
+      <h3>Nền &amp; bề mặt</h3>
+      <div class="grid grid-swatch">
+        <div class="swatch"><div class="chip" style="background:var(--color-bg-sunken)"></div><div class="meta"><div class="name">bg-sunken</div><div class="val">#1a1f29</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-bg)"></div><div class="meta"><div class="name">bg (nền trang)</div><div class="val">#222831</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-surface)"></div><div class="meta"><div class="name">surface (thẻ)</div><div class="val">#1f2937</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-surface-hover)"></div><div class="meta"><div class="name">surface-hover</div><div class="val">#2b3340</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-border)"></div><div class="meta"><div class="name">border</div><div class="val">#374151</div></div></div>
+      </div>
+
+      <h3>Chữ</h3>
+      <div class="grid grid-swatch">
+        <div class="swatch"><div class="chip" style="background:var(--color-text)"></div><div class="meta"><div class="name">text</div><div class="val">#ffffff</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-text-muted)"></div><div class="meta"><div class="name">text-muted</div><div class="val">#9ca3af</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-text-subtle)"></div><div class="meta"><div class="name">text-subtle</div><div class="val">#6b7280</div></div></div>
+      </div>
+
+      <h3>Nhấn &amp; trạng thái</h3>
+      <div class="grid grid-swatch">
+        <div class="swatch"><div class="chip" style="background:var(--color-accent)"></div><div class="meta"><div class="name">accent (cam)</div><div class="val">#f97316</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-accent-hover)"></div><div class="meta"><div class="name">accent-hover</div><div class="val">#fb923c</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-link)"></div><div class="meta"><div class="name">link (xanh trời)</div><div class="val">#0ea5e9</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-success)"></div><div class="meta"><div class="name">success</div><div class="val">#4ade80</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-warning)"></div><div class="meta"><div class="name">warning / combo</div><div class="val">#facc15</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--color-danger)"></div><div class="meta"><div class="name">danger / hết giờ</div><div class="val">#f87171</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--game-mole)"></div><div class="meta"><div class="name">game-mole</div><div class="val">#a16207</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KIỂU CHỮ ============ -->
+  <section class="block" id="chu">
+    <div class="container">
+      <h2>Kiểu chữ</h2>
+      <p class="desc">Một họ chữ duy nhất: Inter, dự phòng bằng font hệ thống nên không cần tải font ngoài. Tiêu đề đậm 700, chữ thường 400, nút 600.</p>
+
+      <div class="type-row"><div class="spec">4xl · 58/62 · 700</div><div style="font-size:var(--text-4xl);line-height:var(--leading-4xl);font-weight:700;letter-spacing:var(--tracking-tight)">Hết giờ!</div></div>
+      <div class="type-row"><div class="spec">3xl · 44/50 · 700</div><div style="font-size:var(--text-3xl);line-height:var(--leading-3xl);font-weight:700">27 điểm</div></div>
+      <div class="type-row"><div class="spec">2xl · 32/40 · 700</div><div style="font-size:var(--text-2xl);line-height:var(--leading-2xl);font-weight:700">Tiêu đề mục</div></div>
+      <div class="type-row"><div class="spec">xl · 24/32 · 600</div><div style="font-size:var(--text-xl);line-height:var(--leading-xl);font-weight:600">Tiêu đề thẻ</div></div>
+      <div class="type-row"><div class="spec">lg · 20/32 · 400</div><div style="font-size:var(--text-lg);line-height:var(--leading-lg);color:var(--color-text-muted)">Đoạn mở đầu, chữ phụ màu xám.</div></div>
+      <div class="type-row"><div class="spec">base · 16/26 · 400</div><div>Chữ nội dung chính. Đập trúng chuột trong 30 giây, mỗi con được 1 điểm.</div></div>
+      <div class="type-row"><div class="spec">sm · 14/20 · 400</div><div style="font-size:var(--text-sm);line-height:var(--leading-sm)">Chú thích, mô tả trong thẻ.</div></div>
+      <div class="type-row"><div class="spec">xs · 12/16 · 600 · HOA</div><div style="font-size:var(--text-xs);line-height:var(--leading-xs);font-weight:600;letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-text-muted)">Nhãn nhỏ</div></div>
+      <div class="type-row"><div class="spec">mono · 14</div><div style="font-family:var(--font-mono);font-size:var(--text-sm)">--color-accent: #f97316;</div></div>
+    </div>
+  </section>
+
+  <!-- ============ NÚT ============ -->
+  <section class="block" id="nut">
+    <div class="container">
+      <h2>Nút bấm</h2>
+      <p class="desc">Bo góc 6px, đậm 600, padding 12×24. Mỗi màn hình chỉ có <strong>một</strong> nút cam. Chữ trên nút cam dùng màu gần đen để đạt độ tương phản AA.</p>
+
+      <h3>Kiểu</h3>
+      <div class="row">
+        <button class="btn btn-primary">Bắt đầu</button>
+        <button class="btn btn-secondary">Xem luật chơi</button>
+        <button class="btn btn-ghost">Huỷ</button>
+        <button class="btn btn-link">Liên kết</button>
+      </div>
+
+      <h3>Kích thước</h3>
+      <div class="row">
+        <button class="btn btn-primary btn-sm">Nhỏ</button>
+        <button class="btn btn-primary">Vừa</button>
+        <button class="btn btn-primary btn-lg">Chơi lại</button>
+        <button class="btn btn-secondary btn-icon" aria-label="Bật/tắt âm thanh">🔇</button>
+      </div>
+
+      <h3>Trạng thái vô hiệu</h3>
+      <div class="row">
+        <button class="btn btn-primary" disabled>Bắt đầu</button>
+        <button class="btn btn-secondary" disabled>Xem luật chơi</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Ô NHẬP ============ -->
+  <section class="block" id="nhap">
+    <div class="container">
+      <h2>Ô nhập</h2>
+      <p class="desc">Cao 40px, nền bề mặt, viền 1px. Khi focus viền chuyển xanh trời kèm vòng sáng. Game hiện chưa cần nhập liệu; các ô này dành cho phần mở rộng (tên người chơi, cài đặt).</p>
+
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="f1">Tên người chơi</label>
+          <input id="f1" class="input" placeholder="Ví dụ: Minh">
+          <span class="hint">Tối đa 12 ký tự.</span>
+        </div>
+        <div class="field">
+          <label for="f2">Có lỗi</label>
+          <input id="f2" class="input is-error" value="Tên quá dài để hiển thị">
+          <span class="hint error">Tên không được vượt quá 12 ký tự.</span>
+        </div>
+        <div class="field">
+          <label for="f3">Vô hiệu</label>
+          <input id="f3" class="input" value="Không sửa được" disabled>
+        </div>
+        <div class="field">
+          <label for="f4">Danh sách chọn</label>
+          <select id="f4" class="select"><option>30 giây</option><option>60 giây</option></select>
+        </div>
+        <div class="field">
+          <span style="font-size:var(--text-sm);font-weight:500">Công tắc</span>
+          <label class="toggle"><input type="checkbox"> Âm thanh</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THẺ ============ -->
+  <section class="block" id="the">
+    <div class="container">
+      <h2>Thẻ &amp; nhãn</h2>
+      <p class="desc">Thẻ nền <code>surface</code>, viền 1px, bo 8px, padding 24px, bóng nhẹ; các thẻ cách nhau 24px.</p>
+
+      <h3>Thẻ nội dung</h3>
+      <div class="grid grid-3">
+        <div class="card">
+          <h4>Luật chơi</h4>
+          <p>Lưới 3×3, mỗi lượt 30 giây. Đập trúng chuột được 1 điểm, bấm trượt không bị trừ.</p>
+          <div class="footer"><button class="btn btn-primary btn-sm">Bắt đầu</button><button class="btn btn-ghost btn-sm">Đóng</button></div>
+        </div>
+        <div class="card is-interactive">
+          <h4>Thẻ bấm được</h4>
+          <p>Di chuột vào thẻ: viền sáng hơn và thẻ nhích lên 2px.</p>
+        </div>
+        <div class="card">
+          <div class="row" style="margin-bottom:var(--space-3)">
+            <span class="badge accent">Kỷ lục mới!</span>
+            <span class="badge combo">Combo x5</span>
+            <span class="badge success">● Đang chơi</span>
+            <span class="badge">Lượt 3</span>
+          </div>
+          <p>Nhãn bo tròn hoàn toàn, cao 24px, chữ 12px đậm.</p>
+        </div>
+      </div>
+
+      <h3>Thẻ chỉ số (thanh trên màn hình chơi)</h3>
+      <div class="grid grid-3">
+        <div class="card stat"><div class="label">Điểm</div><div class="value accent">12</div></div>
+        <div class="card stat"><div class="label">Thời gian</div><div class="value low">4s</div></div>
+        <div class="card stat"><div class="label">Kỷ lục</div><div class="value">27</div></div>
+      </div>
+
+      <h3>Xem trước bảng chơi</h3>
+      <div class="row" style="gap:var(--space-8);align-items:flex-start">
+        <div class="board" aria-label="Lưới 3×3 minh hoạ">
+          <div class="hole"></div><div class="hole"><div class="mole"></div></div><div class="hole"></div>
+          <div class="hole"></div><div class="hole"></div><div class="hole"></div>
+          <div class="hole"><div class="mole hit"></div></div><div class="hole"></div><div class="hole"></div>
+        </div>
+        <div style="max-width:40ch;color:var(--color-text-muted);font-size:var(--text-sm)">
+          <p style="margin-top:0">Ô là hang tròn tối màu với viền trên. Chuột nâu (<code>--game-mole</code>) trồi lên từ đáy; khi bị đập chuyển cam (<code>--game-mole-hit</code>).</p>
+          <p>Bảng tối đa 480px, ô tối thiểu 80px để chạm bằng ngón tay.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KHOẢNG CÁCH & BO GÓC ============ -->
+  <section class="block" id="khoang-cach">
+    <div class="container">
+      <h2>Khoảng cách &amp; bo góc</h2>
+      <p class="desc">Mọi khoảng cách là bội số của 4px. Nội dung rộng tối đa 1280px, tài liệu đọc rộng tối đa 760px.</p>
+
+      <h3>Khoảng cách</h3>
+      <div class="scale-row"><span class="tok">--space-1 · 4</span><span class="bar" style="width:4px"></span></div>
+      <div class="scale-row"><span class="tok">--space-2 · 8</span><span class="bar" style="width:8px"></span></div>
+      <div class="scale-row"><span class="tok">--space-3 · 12</span><span class="bar" style="width:12px"></span></div>
+      <div class="scale-row"><span class="tok">--space-4 · 16</span><span class="bar" style="width:16px"></span></div>
+      <div class="scale-row"><span class="tok">--space-6 · 24</span><span class="bar" style="width:24px"></span></div>
+      <div class="scale-row"><span class="tok">--space-8 · 32</span><span class="bar" style="width:32px"></span></div>
+      <div class="scale-row"><span class="tok">--space-12 · 48</span><span class="bar" style="width:48px"></span></div>
+      <div class="scale-row"><span class="tok">--space-16 · 64</span><span class="bar" style="width:64px"></span></div>
+      <div class="scale-row"><span class="tok">--space-20 · 80</span><span class="bar" style="width:80px"></span></div>
+
+      <h3>Bo góc</h3>
+      <div class="row" style="gap:var(--space-6)">
+        <div><div class="radius-box" style="border-radius:var(--radius-sm)"></div><div class="spec" style="font-family:var(--font-mono);font-size:12px;color:var(--color-text-muted);margin-top:8px">sm · 4</div></div>
+        <div><div class="radius-box" style="border-radius:var(--radius-md)"></div><div style="font-family:var(--font-mono);font-size:12px;color:var(--color-text-muted);margin-top:8px">md · 6 (nút, ô nhập)</div></div>
+        <div><div class="radius-box" style="border-radius:var(--radius-lg)"></div><div style="font-family:var(--font-mono);font-size:12px;color:var(--color-text-muted);margin-top:8px">lg · 8 (thẻ)</div></div>
+        <div><div class="radius-box" style="border-radius:var(--radius-xl)"></div><div style="font-family:var(--font-mono);font-size:12px;color:var(--color-text-muted);margin-top:8px">xl · 16 (bảng chơi)</div></div>
+        <div><div class="radius-box" style="border-radius:var(--radius-full)"></div><div style="font-family:var(--font-mono);font-size:12px;color:var(--color-text-muted);margin-top:8px">full (nhãn)</div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">Design system Đập Chuột · phong cách tham khảo từ getdesign.md, không dùng logo, hình ảnh hay nội dung của trang đó.</div>
+</footer>
+
+</body>
+</html>

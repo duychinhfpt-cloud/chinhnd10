@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quy tắc &amp; dữ liệu — Tài liệu Đập Chuột</title>
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="index.html">Đập <span>Chuột</span></a>
+    <nav aria-label="Các trang tài liệu">
+      <a href="index.html">Mục lục</a>
+      <a href="01-tong-quan.html">Tổng quan</a>
+      <a href="02-chuc-nang.html">Chức năng</a>
+      <a href="03-man-hinh.html">Màn hình</a>
+      <a href="04-quy-tac-du-lieu.html" aria-current="page">Quy tắc &amp; dữ liệu</a>
+      <a href="05-ke-hoach-test.html">Kế hoạch test</a>
+      <a href="../design/design-system.html">Design system</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<span class="eyebrow">04 · Quy tắc &amp; dữ liệu</span>
+  <h1>Quy tắc &amp; dữ liệu</h1>
+  <p class="lead">Các con số chính xác để viết code và kiểm thử: nhịp chuột, cách tính điểm, trạng thái game và dữ liệu lưu trên trình duyệt.</p>
+
+  <h2 id="nhip">Nhịp chuột theo chặng</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Chặng</th><th>Thời gian còn lại</th><th class="num">Chuột hiện</th><th class="num">Nghỉ giữa 2 con</th><th class="num">Ước tính số chuột</th></tr>
+      <tr><td>1 · Khởi động</td><td>30 → 21 giây</td><td class="num">1,2 s</td><td class="num">0,5 – 0,7 s</td><td class="num">≈ 5 – 6</td></tr>
+      <tr><td>2 · Tăng tốc</td><td>20 → 11 giây</td><td class="num">1,0 s</td><td class="num">0,4 – 0,6 s</td><td class="num">≈ 6 – 7</td></tr>
+      <tr><td>3 · Nước rút</td><td>10 → 0 giây</td><td class="num">0,8 s</td><td class="num">0,3 – 0,5 s</td><td class="num">≈ 8</td></tr>
+      <tr><td colspan="4"><strong>Cả lượt</strong> (khi không đập con nào)</td><td class="num"><strong>≈ 19 – 21</strong></td></tr>
+    </table>
+  </div>
+  <ul>
+    <li>"Chuột hiện" là thời gian tối đa; bị đập thì lặn sớm hơn, nên người chơi giỏi sẽ thấy nhiều chuột hơn (khoảng 30–40 con).</li>
+    <li>Chặng được xác định <strong>lúc chuột xuất hiện</strong>: con xuất hiện ở giây 21,1 dùng thông số chặng 1 cho đến khi lặn.</li>
+    <li>Khoảng nghỉ chọn ngẫu nhiên đều trong khoảng cho trước.</li>
+    <li>Không cho chuột mới xuất hiện nếu thời gian còn lại dưới 0,3 giây.</li>
+  </ul>
+
+  <h3>Hằng số trong code</h3>
+  <p>Đặt ở đầu <code>app/game.js</code> để dễ chỉnh:</p>
+  <div class="screen">const THOI_GIAN_LUOT = 30_000;     // ms
+const DEM_NGUOC_CHUAN_BI = 3;        // 3-2-1, mỗi số 600 ms
+const CHANG = [
+  { tuGiay: 30, hien: 1200, nghi: [500, 700] },
+  { tuGiay: 20, hien: 1000, nghi: [400, 600] },
+  { tuGiay: 10, hien:  800, nghi: [300, 500] },
+];
+const COMBO_HIEN_TU = 3;
+const GIAY_CANH_BAO = 5;</div>
+
+  <h2>Cách tính điểm</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Sự kiện</th><th class="num">Điểm</th><th>Combo</th><th>Bộ đếm</th></tr>
+      <tr><td>Trúng chuột</td><td class="num">+1</td><td>+1</td><td>trung +1</td></tr>
+      <tr><td>Bấm lại con đang choáng</td><td class="num">0</td><td>giữ nguyên</td><td>không đổi</td></tr>
+      <tr><td>Bấm ô trống (trượt)</td><td class="num">0</td><td>về 0</td><td>truot +1</td></tr>
+      <tr><td>Chuột chạy thoát</td><td class="num">0</td><td>về 0</td><td>chayThoat +1</td></tr>
+      <tr><td>Bấm khi đếm 3-2-1 hoặc sau hết giờ</td><td class="num">0</td><td>giữ nguyên</td><td>không đổi</td></tr>
+    </table>
+  </div>
+  <h3>Chỉ số ở màn hình kết quả</h3>
+  <ul>
+    <li><strong>Điểm</strong> = <code>trung</code></li>
+    <li><strong>Số chuột xuất hiện</strong> = <code>trung + chayThoat</code> (con đang hiện lúc hết giờ không tính)</li>
+    <li><strong>Tỉ lệ trúng</strong> = <code>trung / soChuot × 100</code>, làm tròn số nguyên; nếu <code>soChuot = 0</code> thì hiện "—"</li>
+    <li><strong>Combo dài nhất</strong> = giá trị lớn nhất mà combo đạt được trong lượt</li>
+  </ul>
+
+  <h2>Trạng thái game</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Trạng thái</th><th>Mô tả</th><th>Chuyển sang</th></tr>
+      <tr><td><code>cho</code></td><td>Màn hình bắt đầu</td><td><code>chuanBi</code> khi bấm "Bắt đầu"</td></tr>
+      <tr><td><code>chuanBi</code></td><td>Đếm 3-2-1, bảng khoá</td><td><code>dangChoi</code> sau 1,8 giây</td></tr>
+      <tr><td><code>dangChoi</code></td><td>Đồng hồ chạy, chuột xuất hiện, nhận cú bấm</td><td><code>hetGio</code> khi còn 0 giây</td></tr>
+      <tr><td><code>hetGio</code></td><td>Bảng khoá, chữ "Hết giờ!"</td><td><code>ketQua</code> sau 0,8 giây</td></tr>
+      <tr><td><code>ketQua</code></td><td>Màn hình kết quả</td><td><code>chuanBi</code> (Chơi lại) hoặc <code>cho</code></td></tr>
+    </table>
+  </div>
+  <p class="muted">Khi rời trạng thái <code>dangChoi</code>, mọi bộ hẹn giờ (<code>setTimeout</code>, <code>requestAnimationFrame</code>) phải được huỷ để lượt sau không có "chuột ma".</p>
+
+  <h2>Dữ liệu một lượt (trong bộ nhớ)</h2>
+  <div class="screen">{
+  trangThai: "dangChoi",
+  batDauLuc: 1731489000000,   // performance.now() lúc bắt đầu
+  diem: 12,
+  combo: 4,
+  comboDaiNhat: 7,
+  trung: 12,
+  truot: 2,
+  chayThoat: 5,
+  chuot: { o: 5, hienLuc: 1731489014200, biDap: false }   // null nếu không có
+}</div>
+
+  <h2>Dữ liệu lưu trên trình duyệt</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Khoá localStorage</th><th>Kiểu</th><th>Mặc định</th><th>Ý nghĩa</th></tr>
+      <tr><td><code>dapChuot.kyLuc</code></td><td>số nguyên ≥ 0</td><td>không có → hiện "—"</td><td>Điểm cao nhất</td></tr>
+      <tr><td><code>dapChuot.comboKyLuc</code></td><td>số nguyên ≥ 0</td><td>không có → hiện "—"</td><td>Combo dài nhất mọi lượt</td></tr>
+      <tr><td><code>dapChuot.amThanh</code></td><td><code>"bat"</code> / <code>"tat"</code></td><td><code>"tat"</code></td><td>Cài đặt âm thanh</td></tr>
+    </table>
+  </div>
+  <ul>
+    <li>Đọc khi tải trang; giá trị không hợp lệ (chữ, số âm) coi như chưa có.</li>
+    <li>Ghi kỷ lục ngay khi chuyển sang <code>ketQua</code>, không ghi giữa lượt.</li>
+    <li>Mọi thao tác <code>localStorage</code> bọc trong <code>try/catch</code>; lỗi thì bỏ qua, game vẫn chạy.</li>
+    <li>Không thu thập, không gửi dữ liệu nào ra ngoài.</li>
+  </ul>
+
+  <h2>Chọn ô ngẫu nhiên</h2>
+  <ol>
+    <li>Lấy danh sách 9 ô, bỏ ô của con chuột vừa xong.</li>
+    <li>Chọn ngẫu nhiên đều 1 trong 8 ô còn lại bằng <code>Math.random()</code>.</li>
+  </ol>
+
+  <nav class="pager" aria-label="Chuyển trang">
+    <a href="03-man-hinh.html"><small>← Trước</small>Màn hình</a>
+    <a class="next" href="05-ke-hoach-test.html"><small>Tiếp →</small>Kế hoạch test</a>
+  </nav>
+</main>
+
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.0 · 13/11/2026 · Chưa có code game.</footer>
+
+</body>
+</html>

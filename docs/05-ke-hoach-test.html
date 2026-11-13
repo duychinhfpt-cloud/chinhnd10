@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kế hoạch test — Tài liệu Đập Chuột</title>
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="index.html">Đập <span>Chuột</span></a>
+    <nav aria-label="Các trang tài liệu">
+      <a href="index.html">Mục lục</a>
+      <a href="01-tong-quan.html">Tổng quan</a>
+      <a href="02-chuc-nang.html">Chức năng</a>
+      <a href="03-man-hinh.html">Màn hình</a>
+      <a href="04-quy-tac-du-lieu.html">Quy tắc &amp; dữ liệu</a>
+      <a href="05-ke-hoach-test.html" aria-current="page">Kế hoạch test</a>
+      <a href="../design/design-system.html">Design system</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<span class="eyebrow">05 · Kế hoạch test</span>
+  <h1>Kế hoạch test</h1>
+  <p class="lead">Các ca kiểm thử thủ công cho game, gắn với mã chức năng ở trang 02. Game đạt khi mọi ca "Bắt buộc" đều qua.</p>
+
+  <h2>Môi trường</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Thiết bị</th><th>Trình duyệt</th><th>Chiều rộng</th></tr>
+      <tr><td>Máy tính</td><td>Chrome, Edge, Firefox bản mới</td><td>1920px, 1024px</td></tr>
+      <tr><td>Điện thoại Android</td><td>Chrome</td><td>360px</td></tr>
+      <tr><td>iPhone</td><td>Safari</td><td>390px</td></tr>
+      <tr><td>Máy tính bảng</td><td>Bất kỳ</td><td>768px</td></tr>
+    </table>
+  </div>
+  <p>Mở <code>app/index.html</code> trực tiếp từ ổ đĩa (không cần server). Mở DevTools → Console để theo dõi lỗi.</p>
+
+  <h2>Ca kiểm thử</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Mã</th><th>CN</th><th>Bước</th><th>Kết quả mong đợi</th></tr>
+      <tr><td>T-01</td><td>01</td><td>Mở trang lần đầu (xoá localStorage trước)</td><td>Màn hình bắt đầu; kỷ lục và combo max hiện "—"; Console không có lỗi</td></tr>
+      <tr><td>T-02</td><td>01</td><td>Bấm "Bắt đầu"</td><td>Đếm 3-2-1, trong lúc đếm bấm ô không có tác dụng; sau đó đồng hồ hiện 30s</td></tr>
+      <tr><td>T-03</td><td>02</td><td>Quan sát 20 lần chuột xuất hiện</td><td>Luôn tối đa 1 chuột; không con nào xuất hiện ở đúng ô của con ngay trước</td></tr>
+      <tr><td>T-04</td><td>03</td><td>Không bấm gì, bấm giờ thời gian chuột hiện ở mỗi chặng</td><td>Khoảng 1,2s / 1,0s / 0,8s (±0,1s); nhãn "Tăng tốc!" ở 20s, "Nước rút!" ở 10s</td></tr>
+      <tr><td>T-05</td><td>04</td><td>Đập trúng 1 con</td><td>Điểm +1, chuột đổi màu cam, chữ "+1" bay lên</td></tr>
+      <tr><td>T-06</td><td>04</td><td>Bấm liên tục 5 lần thật nhanh vào cùng 1 con</td><td>Điểm chỉ tăng 1</td></tr>
+      <tr><td>T-07</td><td>04</td><td>Bấm vào ô trống</td><td>Điểm không đổi, ô rung nhẹ, không có màu đỏ</td></tr>
+      <tr><td>T-08</td><td>05</td><td>Trúng 3 con liên tiếp</td><td>Hiện nhãn "Combo x3"; trúng tiếp lên x4</td></tr>
+      <tr><td>T-09</td><td>05</td><td>Đang combo x4 thì bấm trượt</td><td>Nhãn combo biến mất; điểm không bị trừ</td></tr>
+      <tr><td>T-10</td><td>05</td><td>Đang combo x4 thì để 1 con chạy thoát</td><td>Nhãn combo biến mất</td></tr>
+      <tr><td>T-11</td><td>06</td><td>Dùng đồng hồ ngoài đo từ khi đồng hồ game hiện 30 đến "Hết giờ!"</td><td>30 giây ± 0,5 giây</td></tr>
+      <tr><td>T-12</td><td>06</td><td>Quan sát 5 giây cuối</td><td>Số giây chuyển màu đỏ từ 5s</td></tr>
+      <tr><td>T-13</td><td>06</td><td>Bấm liên tục vào bảng ngay khi hết giờ</td><td>Điểm không thay đổi sau "Hết giờ!"</td></tr>
+      <tr><td>T-14</td><td>06</td><td>Giữa lượt chuyển sang tab khác 40 giây rồi quay lại</td><td>Vào màn hình kết quả, không có lỗi</td></tr>
+      <tr><td>T-15</td><td>07</td><td>Chơi 1 lượt, ghi lại số trúng/trượt/chạy thoát</td><td>Số chuột = trúng + chạy thoát; tỉ lệ trúng đúng công thức; combo dài nhất đúng</td></tr>
+      <tr><td>T-16</td><td>07</td><td>Không bấm gì cả lượt</td><td>Điểm 0, tỉ lệ 0%, không lỗi chia cho 0</td></tr>
+      <tr><td>T-17</td><td>07</td><td>Bấm "Chơi lại" 5 lần liên tiếp</td><td>Mỗi lượt điểm về 0, đồng hồ về 30; không có chuột "ma", đồng hồ không chạy nhanh lên</td></tr>
+      <tr><td>T-18</td><td>08</td><td>Chơi được 10 điểm, tải lại trang</td><td>Kỷ lục hiện 10</td></tr>
+      <tr><td>T-19</td><td>08</td><td>Chơi được đúng bằng kỷ lục</td><td>Không hiện "Kỷ lục mới!"</td></tr>
+      <tr><td>T-20</td><td>08</td><td>Đặt <code>dapChuot.kyLuc</code> = "abc" trong DevTools, tải lại</td><td>Kỷ lục hiện "—", game chạy bình thường</td></tr>
+      <tr><td>T-21</td><td>08</td><td>Chơi trong cửa sổ ẩn danh Safari</td><td>Game chơi được dù không lưu được kỷ lục</td></tr>
+      <tr><td>T-22</td><td>09</td><td>Tải trang lần đầu</td><td>Âm thanh tắt; bật lên, tải lại thì vẫn bật</td></tr>
+    </table>
+  </div>
+
+  <h2>Giao diện &amp; trợ năng</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Mã</th><th>Bước</th><th>Kết quả mong đợi</th></tr>
+      <tr><td>G-01</td><td>Xem ở 360px, 768px, 1920px</td><td>Lưới luôn vuông, không vỡ bố cục, không phải cuộn</td></tr>
+      <tr><td>G-02</td><td>Đo ô trên điện thoại 360px</td><td>Cạnh ô ≥ 80px</td></tr>
+      <tr><td>G-03</td><td>Chơi bằng cảm ứng trên điện thoại</td><td>Chạm đúng ô được tính, không bị phóng to khi chạm nhanh 2 lần</td></tr>
+      <tr><td>G-04</td><td>So màu, chữ, nút với design system</td><td>Chỉ dùng biến trong <code>tokens.css</code>; mỗi màn hình đúng 1 nút cam</td></tr>
+      <tr><td>G-05</td><td>Bật "giảm chuyển động" trong hệ điều hành</td><td>Không có hiệu ứng trượt/rung, game vẫn chơi được</td></tr>
+      <tr><td>G-06</td><td>Dùng bàn phím: Tab đến nút, Enter</td><td>Bắt đầu và chơi lại được bằng bàn phím; thấy rõ viền focus</td></tr>
+    </table>
+  </div>
+
+  <h2>Tiêu chí hoàn thành</h2>
+  <ul class="checklist">
+    <li>Tất cả ca T-01 → T-21 và G-01 → G-06 đều qua trên Chrome máy tính và ít nhất 1 điện thoại.</li>
+    <li>T-22 (âm thanh) qua, hoặc được ghi rõ là để sang bản sau.</li>
+    <li>Console không có lỗi hay cảnh báo trong suốt 5 lượt chơi liên tiếp.</li>
+    <li>Không dùng thư viện ngoài; chơi được khi tắt mạng.</li>
+    <li>Code tách <code>app/index.html</code>, <code>app/style.css</code>, <code>app/game.js</code>; thông số nằm ở hằng số đầu <code>game.js</code>.</li>
+    <li>Ghi kết quả test (qua/không qua, thiết bị, ngày) vào bảng trên trước khi nộp.</li>
+  </ul>
+
+  <h2>Mẫu ghi lỗi</h2>
+  <div class="screen">Mã ca:      T-06
+Thiết bị:   iPhone 13 · Safari
+Bước:       Chạm nhanh 5 lần vào 1 con chuột
+Mong đợi:   Điểm +1
+Thực tế:    Điểm +2
+Ảnh/clip:   (đính kèm)</div>
+
+  <nav class="pager" aria-label="Chuyển trang">
+    <a href="04-quy-tac-du-lieu.html"><small>← Trước</small>Quy tắc &amp; dữ liệu</a>
+  </nav>
+</main>
+
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.0 · 13/11/2026 · Chưa có code game.</footer>
+
+</body>
+</html>

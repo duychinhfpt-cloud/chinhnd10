@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Màn hình — Tài liệu Đập Chuột</title>
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="index.html">Đập <span>Chuột</span></a>
+    <nav aria-label="Các trang tài liệu">
+      <a href="index.html">Mục lục</a>
+      <a href="01-tong-quan.html">Tổng quan</a>
+      <a href="02-chuc-nang.html">Chức năng</a>
+      <a href="03-man-hinh.html" aria-current="page">Màn hình</a>
+      <a href="04-quy-tac-du-lieu.html">Quy tắc &amp; dữ liệu</a>
+      <a href="05-ke-hoach-test.html">Kế hoạch test</a>
+      <a href="../design/design-system.html">Design system</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<span class="eyebrow">03 · Màn hình</span>
+  <h1>Màn hình</h1>
+  <p class="lead">Game có 3 màn hình trên cùng một trang. Mọi màu, chữ, nút, thẻ lấy từ <a href="../design/design-system.html">design system</a>.</p>
+
+  <h2>Luồng màn hình</h2>
+  <div class="screen">[Bắt đầu] --bấm "Bắt đầu"--> [Đếm 3-2-1] --> [Chơi 30s] --hết giờ--> [Kết quả]
+                                    ^                                    |
+                                    +-------------- "Chơi lại" ----------+
+[Kết quả] --"Về màn hình chính"--> [Bắt đầu]</div>
+
+  <h2>Quy tắc chung</h2>
+  <ul>
+    <li>Nền trang <code>--color-bg</code>, nội dung căn giữa, rộng tối đa 480px trên mọi màn hình game.</li>
+    <li>Mỗi màn hình chỉ có <strong>một nút cam</strong> (nút chính).</li>
+    <li>Nút loa (bật/tắt âm) dạng <code>.btn-secondary .btn-icon</code> ở góc trên phải.</li>
+    <li>Chữ tiếng Việt, không cuộn trang ở chiều cao từ 600px trở lên.</li>
+  </ul>
+
+  <h2>1. Màn hình bắt đầu</h2>
+  <div class="screen">+--------------------------------------+
+|                                [🔇]  |
+|            ĐẬP CHUỘT                 |   tiêu đề 4xl, đậm 700
+|  Đập trúng chuột trong 30 giây,      |   chữ lg, màu text-muted
+|  mỗi con được 1 điểm.                |
+|                                      |
+|   +-----------+  +-----------+       |
+|   | KỶ LỤC    |  | COMBO MAX |       |   2 thẻ chỉ số
+|   |    27     |  |    9      |       |   "—" nếu chưa chơi
+|   +-----------+  +-----------+       |
+|                                      |
+|        [      BẮT ĐẦU      ]         |   .btn-primary .btn-lg, rộng 100%
+|   • Trượt không bị trừ điểm          |   3 gợi ý ngắn, chữ sm
+|   • Chuột nhanh dần theo thời gian   |
+|   • Trúng liên tiếp để lên combo     |
++--------------------------------------+</div>
+  <ul>
+    <li>Phím <strong>Enter</strong> hoặc <strong>Space</strong> cũng bắt đầu lượt.</li>
+    <li>Nút "Bắt đầu" được focus sẵn khi trang tải xong.</li>
+  </ul>
+
+  <h2>2. Màn hình chơi</h2>
+  <div class="screen">+--------------------------------------+
+|  ĐIỂM 12    ⏱ 17s    KỶ LỤC 27  [🔇] |   thanh trên: 3 chỉ số
+|  [Combo x4]          [Tăng tốc!]     |   nhãn combo / nhãn chặng
+|  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░          |   thanh tiến trình thời gian
+|                                      |
+|     +------+ +------+ +------+       |
+|     |  ◯   | |  🐭  | |  ◯   |       |   lưới 3×3, ô vuông bằng nhau
+|     +------+ +------+ +------+       |   hang tròn --game-hole
+|     |  ◯   | |  ◯   | |  ◯   |       |   chuột --game-mole
+|     +------+ +------+ +------+       |
+|     |  ◯   | |  ◯   | |  ◯   |       |
+|     +------+ +------+ +------+       |
++--------------------------------------+</div>
+
+  <h3>Thanh trên</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Thành phần</th><th>Hiển thị</th><th>Trạng thái</th></tr>
+      <tr><td>Điểm</td><td>Số lớn, màu cam <code>--color-accent</code></td><td>Nảy nhẹ khi +1</td></tr>
+      <tr><td>Thời gian</td><td>Số giây còn lại, kèm thanh tiến trình</td><td>Đỏ <code>--game-timer-low</code> từ 5 giây cuối</td></tr>
+      <tr><td>Kỷ lục</td><td>Số, màu chữ thường</td><td>Khi điểm vượt kỷ lục: số kỷ lục đổi theo điểm hiện tại, viền cam</td></tr>
+      <tr><td>Nhãn combo</td><td><span class="badge combo">Combo x4</span></td><td>Chỉ hiện khi combo ≥ 3; biến mất khi combo về 0</td></tr>
+      <tr><td>Nhãn chặng</td><td><span class="badge accent">Tăng tốc!</span> / <span class="badge accent">Nước rút!</span></td><td>Hiện 1 giây đầu mỗi chặng 2, 3</td></tr>
+    </table>
+  </div>
+
+  <h3>Lưới 3×3</h3>
+  <ul>
+    <li>Khung bảng: nền <code>--color-bg-sunken</code>, viền 1px, bo <code>--radius-xl</code>, cạnh tối đa <code>--game-board-max</code> (480px), luôn vuông.</li>
+    <li>Ô: cạnh tối thiểu 80px, khoảng cách <code>--game-gap</code>.</li>
+    <li>Chuột trồi lên/lặn xuống bằng hiệu ứng trượt dọc 120ms.</li>
+    <li>Trúng: chuột đổi màu cam, chữ "+1" bay lên và mờ dần trong 0,5 giây.</li>
+    <li>Trượt: ô rung ngang 2 lần trong 150ms, không đổi màu đỏ (không gây cảm giác bị phạt).</li>
+    <li>Con trỏ trên máy tính: hình búa nếu trình duyệt hỗ trợ con trỏ tuỳ chỉnh, nếu không dùng <code>pointer</code>.</li>
+    <li>Không có hiệu ứng khi chế độ "giảm chuyển động" được bật (chỉ đổi màu, không trượt/rung).</li>
+  </ul>
+
+  <h2>3. Màn hình kết quả</h2>
+  <div class="screen">+--------------------------------------+
+|                                [🔇]  |
+|             HẾT GIỜ!                 |   tiêu đề 4xl
+|               27                     |   điểm, số rất lớn, màu cam
+|          [Kỷ lục mới!]               |   chỉ hiện khi phá kỷ lục
+|                                      |
+|  +----------+ +----------+           |
+|  | Chuột    | | Trúng    |           |
+|  |   35     | |   27     |           |   lưới thẻ chỉ số 2 cột
+|  +----------+ +----------+           |
+|  | Trượt    | | Tỉ lệ    |           |
+|  |    4     | |   77%    |           |
+|  +----------+ +----------+           |
+|  | Combo dài nhất: 9  (KL: 11)  |    |
+|  +------------------------------+    |
+|        [     CHƠI LẠI     ]          |   .btn-primary .btn-lg
+|        [ Về màn hình chính ]         |   .btn-ghost
++--------------------------------------+</div>
+  <ul>
+    <li>Nút "Chơi lại" được focus sẵn; Enter/Space để chơi lại.</li>
+    <li>Nếu combo dài nhất của lượt vượt kỷ lục combo: hiện thêm nhãn "Combo kỷ lục!".</li>
+  </ul>
+
+  <h2>Hiển thị theo thiết bị</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Chiều rộng</th><th>Bố cục</th></tr>
+      <tr><td>360 – 479px</td><td>Bảng chiếm hết chiều ngang trừ lề 16px; thanh trên thu gọn: "12 · 17s · KL 27"</td></tr>
+      <tr><td>480 – 1023px</td><td>Bảng 480px, căn giữa</td></tr>
+      <tr><td>≥ 1024px</td><td>Bảng 480px, căn giữa theo cả chiều dọc; không phóng to thêm</td></tr>
+    </table>
+  </div>
+
+  <h2>Trợ năng</h2>
+  <ul>
+    <li>Mỗi ô là một <code>&lt;button&gt;</code> có nhãn "Ô 1" … "Ô 9"; ô có chuột có nhãn "Ô 5, có chuột".</li>
+    <li>Điểm và thời gian đặt trong vùng <code>aria-live="polite"</code>, chỉ đọc mỗi 5 giây để không gây ồn.</li>
+    <li>Độ tương phản chữ đạt WCAG AA (đã tính trong design system).</li>
+  </ul>
+
+  <nav class="pager" aria-label="Chuyển trang">
+    <a href="02-chuc-nang.html"><small>← Trước</small>Chức năng</a>
+    <a class="next" href="04-quy-tac-du-lieu.html"><small>Tiếp →</small>Quy tắc &amp; dữ liệu</a>
+  </nav>
+</main>
+
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.0 · 13/11/2026 · Chưa có code game.</footer>
+
+</body>
+</html>

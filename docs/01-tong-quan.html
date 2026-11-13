@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tổng quan — Tài liệu Đập Chuột</title>
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="index.html">Đập <span>Chuột</span></a>
+    <nav aria-label="Các trang tài liệu">
+      <a href="index.html">Mục lục</a>
+      <a href="01-tong-quan.html" aria-current="page">Tổng quan</a>
+      <a href="02-chuc-nang.html">Chức năng</a>
+      <a href="03-man-hinh.html">Màn hình</a>
+      <a href="04-quy-tac-du-lieu.html">Quy tắc &amp; dữ liệu</a>
+      <a href="05-ke-hoach-test.html">Kế hoạch test</a>
+      <a href="../design/design-system.html">Design system</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<span class="eyebrow">01 · Tổng quan</span>
+  <h1>Tổng quan</h1>
+  <p class="lead">Đập Chuột là game phản xạ một người chơi: chuột lần lượt trồi lên trên lưới 3×3, người chơi đập trúng càng nhiều càng tốt trong 30 giây.</p>
+
+  <h2>Mục tiêu</h2>
+  <ul>
+    <li><strong>Cho người chơi:</strong> một lượt giải trí ngắn, dễ hiểu ngay lần đầu, muốn chơi lại để phá kỷ lục.</li>
+    <li><strong>Cho dự án (lớp vibe coding):</strong> sản phẩm nhỏ, đủ trọn vẹn để đi hết quy trình yêu cầu → design → code → test.</li>
+  </ul>
+
+  <h2>Người chơi</h2>
+  <p><strong>Mọi lứa tuổi</strong>, từ trẻ em đến người lớn, chơi trên điện thoại hoặc máy tính. Hệ quả cho thiết kế:</p>
+  <ul>
+    <li>Luật hiểu được trong một câu, không cần hướng dẫn dài.</li>
+    <li>Không có hình phạt: bấm trượt không bị trừ điểm.</li>
+    <li>Ô đủ to để chạm bằng ngón tay (tối thiểu 80px), chữ to, tương phản cao.</li>
+    <li>Âm thanh mặc định tắt; tôn trọng chế độ "giảm chuyển động" của hệ điều hành.</li>
+  </ul>
+
+  <h2>Phạm vi</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Trong phạm vi v1</th><th>Ngoài phạm vi v1</th></tr>
+      <tr>
+        <td>
+          Lưới 3×3, lượt 30 giây<br>
+          Độ khó tăng dần trong lượt<br>
+          Tính điểm, chuỗi combo<br>
+          Kỷ lục và combo dài nhất lưu trên máy<br>
+          3 màn hình: bắt đầu, chơi, kết quả<br>
+          Bật/tắt âm thanh
+        </td>
+        <td>
+          Chọn mức độ khó trước khi chơi<br>
+          Vật phẩm đặc biệt (chuột vàng, bom)<br>
+          Nhân điểm theo combo<br>
+          Bảng xếp hạng online, đăng nhập<br>
+          Chơi nhiều người, tạm dừng
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <h2 id="quyet-dinh">Quyết định sau phỏng vấn</h2>
+  <p>5 câu hỏi làm rõ ý tưởng từ <code>YEU-CAU.md</code>:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>#</th><th>Câu hỏi</th><th>Trả lời</th><th>Ảnh hưởng</th></tr>
+      <tr><td class="num">1</td><td>Game dành cho ai?</td><td>Mọi lứa tuổi</td><td>Không phạt, ô to, giao diện dễ hiểu</td></tr>
+      <tr><td class="num">2</td><td>Độ khó trong 30 giây?</td><td>Tăng dần</td><td><strong>Thay đổi so với YEU-CAU.md</strong>: nhịp chuột chia 3 chặng, nhanh dần (xem <a href="04-quy-tac-du-lieu.html#nhip">trang 04</a>)</td></tr>
+      <tr><td class="num">3</td><td>Bấm trượt có bị phạt?</td><td>Không phạt</td><td>Giữ như YEU-CAU.md; đếm số lần trượt ở màn hình kết quả</td></tr>
+      <tr><td class="num">4</td><td>Thêm yếu tố hấp dẫn?</td><td>Chuỗi combo</td><td><strong>Mới</strong>: hiển thị combo khi trúng liên tiếp, lưu combo dài nhất</td></tr>
+      <tr><td class="num">5</td><td>Đẩy lên repo nào?</td><td><code>chinhnd10</code></td><td>Không ảnh hưởng game</td></tr>
+    </table>
+  </div>
+
+  <h2>Công nghệ</h2>
+  <ul>
+    <li>HTML + CSS + JavaScript thuần, không thư viện ngoài, không cần server.</li>
+    <li>Giao diện dùng biến trong <a href="../design/tokens.css"><code>design/tokens.css</code></a>, xem trước ở <a href="../design/design-system.html">design system</a>.</li>
+    <li>Code game (buổi sau) đặt trong <code>app/</code>: <code>index.html</code>, <code>style.css</code>, <code>game.js</code>.</li>
+  </ul>
+
+  <h2>Thuật ngữ</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Từ</th><th>Nghĩa</th></tr>
+      <tr><td>Lượt</td><td>Một lần chơi 30 giây, từ lúc bấm "Bắt đầu" đến khi hết giờ</td></tr>
+      <tr><td>Ô / hang</td><td>Một trong 9 vị trí trên lưới, đánh số 1–9 từ trái sang phải, trên xuống dưới</td></tr>
+      <tr><td>Trúng</td><td>Bấm vào ô đang có chuột</td></tr>
+      <tr><td>Trượt</td><td>Bấm vào ô không có chuột</td></tr>
+      <tr><td>Chạy thoát</td><td>Chuột tự lặn xuống mà không bị đập</td></tr>
+      <tr><td>Combo</td><td>Số lần trúng liên tiếp, không xen trượt hay chạy thoát</td></tr>
+      <tr><td>Chặng</td><td>Mỗi đoạn 10 giây trong lượt, có nhịp chuột riêng</td></tr>
+    </table>
+  </div>
+
+  <nav class="pager" aria-label="Chuyển trang">
+    <a href="index.html"><small>← Trước</small>Mục lục</a>
+    <a class="next" href="02-chuc-nang.html"><small>Tiếp →</small>Chức năng</a>
+  </nav>
+</main>
+
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.0 · 13/11/2026 · Chưa có code game.</footer>
+
+</body>
+</html>

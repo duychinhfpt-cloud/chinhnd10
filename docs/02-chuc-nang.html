@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chức năng — Tài liệu Đập Chuột</title>
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="index.html">Đập <span>Chuột</span></a>
+    <nav aria-label="Các trang tài liệu">
+      <a href="index.html">Mục lục</a>
+      <a href="01-tong-quan.html">Tổng quan</a>
+      <a href="02-chuc-nang.html" aria-current="page">Chức năng</a>
+      <a href="03-man-hinh.html">Màn hình</a>
+      <a href="04-quy-tac-du-lieu.html">Quy tắc &amp; dữ liệu</a>
+      <a href="05-ke-hoach-test.html">Kế hoạch test</a>
+      <a href="../design/design-system.html">Design system</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<span class="eyebrow">02 · Chức năng</span>
+  <h1>Chức năng</h1>
+  <p class="lead">Danh sách chức năng của game, mỗi chức năng có mã (CN-xx) để tham chiếu từ kế hoạch test.</p>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Mã</th><th>Chức năng</th><th>Ưu tiên</th></tr>
+      <tr><td>CN-01</td><td>Bắt đầu lượt chơi</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-02</td><td>Chuột xuất hiện ngẫu nhiên</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-03</td><td>Độ khó tăng dần</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-04</td><td>Đập chuột và tính điểm</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-05</td><td>Chuỗi combo</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-06</td><td>Đồng hồ đếm ngược và kết thúc lượt</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-07</td><td>Màn hình kết quả và chơi lại</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-08</td><td>Kỷ lục lưu trên máy</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-09</td><td>Bật/tắt âm thanh</td><td><span class="badge">Nên có</span></td></tr>
+    </table>
+  </div>
+
+  <h2>CN-01 · Bắt đầu lượt chơi</h2>
+  <ul>
+    <li>Bấm nút <strong>"Bắt đầu"</strong> ở màn hình bắt đầu (hoặc <strong>"Chơi lại"</strong> ở màn hình kết quả) thì vào màn hình chơi.</li>
+    <li>Hiện đếm ngược <strong>3 – 2 – 1</strong> (mỗi số 0,6 giây) để người chơi chuẩn bị; đồng hồ 30 giây chỉ chạy sau khi đếm xong.</li>
+    <li>Điểm, combo, các bộ đếm đều về 0.</li>
+  </ul>
+
+  <h2>CN-02 · Chuột xuất hiện</h2>
+  <ul>
+    <li>Mỗi lúc chỉ có <strong>tối đa 1 chuột</strong> trên bảng.</li>
+    <li>Chuột trồi lên ở <strong>một ô ngẫu nhiên</strong>, <strong>không trùng ô</strong> với con vừa xong.</li>
+    <li>Chuột ở trên mặt đất một khoảng "thời gian hiện", rồi tự lặn xuống nếu không bị đập (chạy thoát).</li>
+    <li>Sau khi chuột lặn hoặc bị đập, chờ một khoảng "nghỉ" ngẫu nhiên rồi con tiếp theo mới xuất hiện.</li>
+    <li>Thời gian hiện và khoảng nghỉ phụ thuộc chặng (CN-03).</li>
+  </ul>
+
+  <h2>CN-03 · Độ khó tăng dần</h2>
+  <p>Lượt 30 giây chia thành 3 chặng, mỗi chặng 10 giây. Chặng sau chuột hiện ngắn hơn và xuất hiện dày hơn. Thông số cụ thể ở <a href="04-quy-tac-du-lieu.html#nhip">trang 04</a>.</p>
+  <ul>
+    <li><strong>Chặng 1 · Khởi động</strong> (giây 30 → 21): chậm, để người mới làm quen.</li>
+    <li><strong>Chặng 2 · Tăng tốc</strong> (giây 20 → 11): nhịp vừa.</li>
+    <li><strong>Chặng 3 · Nước rút</strong> (giây 10 → 0): nhanh nhất, tạo cao trào.</li>
+  </ul>
+  <p>Khi sang chặng mới, hiện nhãn ngắn ("Tăng tốc!", "Nước rút!") trong 1 giây ở thanh trên. Điểm mỗi con chuột vẫn là 1 ở mọi chặng.</p>
+
+  <h2>CN-04 · Đập chuột và tính điểm</h2>
+  <ul>
+    <li>Bấm/chạm vào ô đang có chuột: <strong>trúng, +1 điểm</strong>. Chuột đổi hình "choáng" (màu cam) 0,2 giây rồi lặn, hiện chữ "+1" bay lên.</li>
+    <li>Mỗi con chuột chỉ tính trúng <strong>một lần</strong>; bấm tiếp vào con đang choáng không cộng thêm.</li>
+    <li>Bấm vào ô trống: <strong>trượt, 0 điểm</strong>. Ô rung nhẹ để phản hồi, tăng bộ đếm trượt.</li>
+    <li>Chuột chạy thoát: 0 điểm, tăng bộ đếm chạy thoát.</li>
+    <li>Điểm không bao giờ âm.</li>
+  </ul>
+
+  <h2>CN-05 · Chuỗi combo</h2>
+  <ul>
+    <li><strong>Combo</strong> = số lần trúng liên tiếp.</li>
+    <li>Combo <strong>về 0</strong> khi bấm trượt hoặc khi có chuột chạy thoát.</li>
+    <li>Từ combo <strong>3</strong> trở lên, hiện nhãn <span class="badge combo">Combo x3</span> ở thanh trên; nhãn nảy nhẹ mỗi lần tăng.</li>
+    <li>Combo <strong>không nhân điểm</strong>, chỉ để khoe và tạo hứng thú.</li>
+    <li>Ghi lại <strong>combo dài nhất</strong> của lượt; hiển thị ở màn hình kết quả.</li>
+  </ul>
+
+  <h2>CN-06 · Đồng hồ và kết thúc lượt</h2>
+  <ul>
+    <li>Đồng hồ đếm ngược từ 30, hiển thị theo giây nguyên.</li>
+    <li>Từ <strong>5 giây cuối</strong>, số chuyển màu đỏ (<code>--game-timer-low</code>).</li>
+    <li>Thời gian tính theo đồng hồ thật của máy (không cộng dồn theo khung hình) để không chạy sai khi máy chậm.</li>
+    <li>Nếu người chơi chuyển sang tab khác, lượt vẫn tiếp tục chạy; khi quay lại, nếu đã quá 30 giây thì vào thẳng màn hình kết quả.</li>
+    <li>Về 0: chuột đang hiện biến mất, bảng bị khoá, cú bấm sau đó không được tính, chuyển sang màn hình kết quả sau 0,8 giây với chữ "Hết giờ!".</li>
+  </ul>
+
+  <h2>CN-07 · Kết quả và chơi lại</h2>
+  <ul>
+    <li>Hiển thị: điểm, số chuột xuất hiện, số trúng, số trượt, tỉ lệ trúng, combo dài nhất, kỷ lục.</li>
+    <li>Nút <strong>"Chơi lại"</strong> (nút chính) vào lượt mới ngay. Nút phụ <strong>"Về màn hình chính"</strong>.</li>
+  </ul>
+
+  <h2>CN-08 · Kỷ lục</h2>
+  <ul>
+    <li>Lưu điểm cao nhất và combo dài nhất mọi thời đại trong <code>localStorage</code>.</li>
+    <li>Điểm lượt vừa chơi <strong>lớn hơn</strong> kỷ lục thì cập nhật và hiện <span class="badge accent">Kỷ lục mới!</span>. Bằng kỷ lục thì không tính là kỷ lục mới.</li>
+    <li>Nếu trình duyệt chặn <code>localStorage</code> (chế độ riêng tư), game vẫn chơi được, chỉ không lưu kỷ lục.</li>
+  </ul>
+
+  <h2>CN-09 · Âm thanh</h2>
+  <ul>
+    <li>Mặc định <strong>tắt</strong>. Nút loa ở góc trên phải ở mọi màn hình.</li>
+    <li>Âm: trúng (bụp ngắn), sang chặng mới, hết giờ. Không có âm khi trượt.</li>
+    <li>Âm thanh tạo bằng Web Audio API, không tải file ngoài.</li>
+    <li>Lựa chọn bật/tắt được nhớ trong <code>localStorage</code>.</li>
+  </ul>
+
+  <nav class="pager" aria-label="Chuyển trang">
+    <a href="01-tong-quan.html"><small>← Trước</small>Tổng quan</a>
+    <a class="next" href="03-man-hinh.html"><small>Tiếp →</small>Màn hình</a>
+  </nav>
+</main>
+
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.0 · 13/11/2026 · Chưa có code game.</footer>
+
+</body>
+</html>

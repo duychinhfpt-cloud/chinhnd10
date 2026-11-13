@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mục lục — Tài liệu Đập Chuột</title>
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="index.html">Đập <span>Chuột</span></a>
+    <nav aria-label="Các trang tài liệu">
+      <a href="index.html" aria-current="page">Mục lục</a>
+      <a href="01-tong-quan.html">Tổng quan</a>
+      <a href="02-chuc-nang.html">Chức năng</a>
+      <a href="03-man-hinh.html">Màn hình</a>
+      <a href="04-quy-tac-du-lieu.html">Quy tắc &amp; dữ liệu</a>
+      <a href="05-ke-hoach-test.html">Kế hoạch test</a>
+      <a href="../design/design-system.html">Design system</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<span class="eyebrow">Tài liệu yêu cầu · v1.0</span>
+  <h1>Đập Chuột — mini game trên trình duyệt</h1>
+  <p class="lead">Lưới 3×3, mỗi lượt 30 giây, đập trúng chuột được 1 điểm. Bộ tài liệu này mô tả đầy đủ game trước khi viết code.</p>
+
+  <div class="note accent">
+    <p><strong>Nguồn:</strong> <code>YEU-CAU.md</code> và 5 câu phỏng vấn làm rõ ý tưởng (13/11/2026). Chỗ nào tài liệu này khác <code>YEU-CAU.md</code> thì <strong>theo tài liệu này</strong>. Các điểm thay đổi được liệt kê ở trang <a href="01-tong-quan.html#quyet-dinh">Tổng quan</a>.</p>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="01-tong-quan.html">
+      <span class="num">01</span>
+      <h3>Tổng quan</h3>
+      <p>Mục tiêu, người chơi, phạm vi, các quyết định sau phỏng vấn.</p>
+    </a>
+    <a class="card" href="02-chuc-nang.html">
+      <span class="num">02</span>
+      <h3>Chức năng</h3>
+      <p>Luật chơi, độ khó tăng dần, chuỗi combo, kỷ lục, âm thanh.</p>
+    </a>
+    <a class="card" href="03-man-hinh.html">
+      <span class="num">03</span>
+      <h3>Màn hình</h3>
+      <p>Bắt đầu, chơi, kết quả: bố cục, thành phần, trạng thái.</p>
+    </a>
+    <a class="card" href="04-quy-tac-du-lieu.html">
+      <span class="num">04</span>
+      <h3>Quy tắc &amp; dữ liệu</h3>
+      <p>Thông số thời gian, cách tính điểm, dữ liệu lưu trên trình duyệt.</p>
+    </a>
+    <a class="card" href="05-ke-hoach-test.html">
+      <span class="num">05</span>
+      <h3>Kế hoạch test</h3>
+      <p>Các ca kiểm thử và tiêu chí hoàn thành.</p>
+    </a>
+    <a class="card" href="../design/design-system.html">
+      <span class="num">DS</span>
+      <h3>Design system</h3>
+      <p>Màu, kiểu chữ, nút, ô nhập, thẻ trong <code>design/tokens.css</code>.</p>
+    </a>
+  </div>
+
+  <h2>Tóm tắt nhanh</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Mục</th><th>Nội dung</th></tr>
+      <tr><td>Nền tảng</td><td>Trình duyệt trên máy tính và điện thoại, HTML/CSS/JS thuần, không cần mạng</td></tr>
+      <tr><td>Người chơi</td><td>Mọi lứa tuổi, 1 người</td></tr>
+      <tr><td>Một lượt</td><td>30 giây, độ khó tăng dần qua 3 chặng</td></tr>
+      <tr><td>Điểm</td><td>Trúng +1; trượt hoặc để chuột chạy thoát: 0 (không phạt)</td></tr>
+      <tr><td>Điểm nhấn</td><td>Chuỗi combo (chỉ để hiển thị, không nhân điểm)</td></tr>
+      <tr><td>Lưu trữ</td><td>Kỷ lục, combo dài nhất, cài đặt âm thanh trong <code>localStorage</code></td></tr>
+    </table>
+  </div>
+
+</main>
+
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.0 · 13/11/2026 · Chưa có code game.</footer>
+
+</body>
+</html>
