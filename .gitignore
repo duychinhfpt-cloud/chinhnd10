@@ -4,3 +4,8 @@ Thumbs.db
 .idea/
 node_modules/
 *.log
+npm-debug.log*
+
+# Biến môi trường, không đưa lên GitHub
+.env
+.env.*
