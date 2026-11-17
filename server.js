@@ -11,6 +11,7 @@ const path = require('node:path');
 const db = require('./server/db');
 const nguoiChoi = require('./server/api-nguoi-choi');
 const admin = require('./server/api-admin');
+const quanTri = require('./server/quan-tri');
 const { LoiHttp, json } = require('./server/tien-ich');
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -64,11 +65,11 @@ function guiFile(req, res, file, ghiLog) {
 
 /* ---------- Trang admin: chỉ cho xem khi đã đăng nhập ---------- */
 const TAI_NGUYEN_ADMIN = new Set(['/admin/admin.css', '/admin/admin.js', '/admin/dang-nhap.js']);
-function phucVuAdmin(req, res, p, ghiLog) {
+async function phucVuAdmin(req, res, p, ghiLog) {
   if (p === '/admin') { res.writeHead(302, { Location: '/admin/' }).end(); return ghiLog(302); }
   if (TAI_NGUYEN_ADMIN.has(p)) return guiFile(req, res, path.join(THU_MUC.admin, path.basename(p)), ghiLog);
   if (p === '/admin/') {
-    const trang = admin.daDangNhap(req) ? 'index.html' : 'dang-nhap.html';
+    const trang = (await admin.adminHienTai(req)) ? 'index.html' : 'dang-nhap.html';
     return guiFile(req, res, path.join(THU_MUC.admin, trang), ghiLog);
   }
   res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Không tìm thấy');
@@ -88,9 +89,17 @@ async function xuLyApi(req, res, url) {
   if (p === '/api/admin/dang-xuat' && m === 'POST') return admin.dangXuat(req, res);
 
   if (p.startsWith('/api/admin/')) {
-    if (!admin.daDangNhap(req)) return json(res, 401, { loiChung: 'Cần đăng nhập' });
+    const tk = await admin.adminHienTai(req);
+    if (!tk) return json(res, 401, { loiChung: 'Cần đăng nhập' });
+    if (p === '/api/admin/toi' && m === 'GET') return admin.toi(req, res, tk);
+    if (p === '/api/admin/doi-mat-khau' && m === 'POST') return admin.doiMatKhau(req, res, tk);
+    if (p === '/api/admin/tai-khoan' && m === 'GET') return admin.dsTaiKhoan(req, res, tk);
+    if (p === '/api/admin/tai-khoan' && m === 'POST') return admin.taoTaiKhoan(req, res);
+    const xoaTk = /^\/api\/admin\/tai-khoan\/(\d{1,15})$/.exec(p);
+    if (xoaTk && m === 'DELETE') return admin.xoaTaiKhoan(req, res, tk, xoaTk[1]);
     if (p === '/api/admin/nguoi-choi' && m === 'GET') return admin.danhSach(req, res, url);
     if (p === '/api/admin/nguoi-choi.csv' && m === 'GET') return admin.xuatCsv(req, res, url);
+    if (p === '/api/admin/nguoi-choi/xoa' && m === 'POST') return admin.xoaNhieu(req, res);
     const xoa = /^\/api\/admin\/nguoi-choi\/(\d{1,15})$/.exec(p);
     if (xoa && m === 'DELETE') return admin.xoa(req, res, xoa[1]);
   }
@@ -128,7 +137,12 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(405, { Allow: 'GET, HEAD' }).end();
     return ghiLog(405);
   }
-  if (p === '/admin' || p.startsWith('/admin/')) return phucVuAdmin(req, res, p, ghiLog);
+  if (p === '/admin' || p.startsWith('/admin/')) {
+    return phucVuAdmin(req, res, p, ghiLog).catch((err) => {
+      console.error('[admin] lỗi:', err);
+      if (!res.headersSent) res.writeHead(500).end('Lỗi máy chủ');
+    });
+  }
 
   const file = timFile(p);
   if (!file) { res.writeHead(400).end('Bad request'); return ghiLog(400); }
@@ -136,6 +150,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 db.khoiTao()
+  .then(() => quanTri.khoiTao())
   .then(() => server.listen(PORT, HOST, () => {
     console.log(`Đập Chuột đang chạy: http://localhost:${PORT}  ·  admin: http://localhost:${PORT}/admin`);
   }))

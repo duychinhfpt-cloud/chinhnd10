@@ -2,7 +2,7 @@
 
 Mini game phản xạ chạy trên trình duyệt: lưới 3×3, mỗi lượt 30 giây, đập trúng được 1 điểm, độ khó tăng dần qua 3 chặng (Khởi động → Tăng tốc → Bão tuyết).
 
-Từ v1.1: người chơi đăng ký (họ tên, email, số điện thoại) trước khi chơi, dữ liệu lưu trong PostgreSQL; trang admin ở `/admin` để xem, tìm kiếm, xoá và xuất CSV.
+Từ v1.1: người chơi đăng ký (họ tên, email, số điện thoại) trước khi chơi, dữ liệu lưu trong PostgreSQL; trang admin ở `/admin` để xem, tìm kiếm, sắp xếp, xoá (từng người hoặc nhiều người), xuất CSV; quản lý nhiều tài khoản admin và đổi mật khẩu.
 
 ## Cấu trúc
 
@@ -43,7 +43,7 @@ Từ v1.1: người chơi đăng ký (họ tên, email, số điện thoại) tr
 
 4. Mở trình duyệt:
    - Game: **http://localhost:3000**
-   - Trang admin: **http://localhost:3000/admin** (đăng nhập bằng `ADMIN_USER` / `ADMIN_PASSWORD` trong `.env`)
+   - Trang admin: **http://localhost:3000/admin** (lần đầu đăng nhập bằng `ADMIN_USER` / `ADMIN_PASSWORD` trong `.env`; sau đó thêm tài khoản và đổi mật khẩu ngay trên trang admin)
 
 5. Xem log khi cần:
 

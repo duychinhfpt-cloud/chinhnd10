@@ -154,12 +154,26 @@ Thực tế:    Điểm +2
     <li>Các ca T-01 → T-22 cũ vẫn qua sau khi đã đăng ký.</li>
   </ul>
 
+  <h2 id="quan-tri-v12">Bổ sung v1.2 · Test quản trị nâng cao</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Mã</th><th>CN</th><th>Bước</th><th>Kết quả mong đợi</th></tr>
+      <tr><td>AD-12</td><td>17</td><td>Thêm tài khoản với dữ liệu sai / tên trùng</td><td>Báo lỗi dưới từng ô / "Tên đăng nhập đã tồn tại"</td></tr>
+      <tr><td>AD-13</td><td>17</td><td>Thêm tài khoản mới rồi đăng nhập bằng tài khoản đó</td><td>Góc phải hiện đúng tên hiển thị</td></tr>
+      <tr><td>AD-14</td><td>17</td><td>Xoá tài khoản đang đăng nhập ở máy khác</td><td>Máy đó tải lại về trang đăng nhập; không có nút xoá cho chính mình</td></tr>
+      <tr><td>AD-15</td><td>18</td><td>Đổi mật khẩu: sai mật khẩu cũ / nhập lại không khớp / hợp lệ</td><td>Báo lỗi tương ứng; hợp lệ thì mật khẩu cũ không đăng nhập được nữa</td></tr>
+      <tr><td>AD-16</td><td>19</td><td>Bấm "Họ tên" 2 lần</td><td>Sắp A→Z rồi Z→A, mũi tên đổi chiều</td></tr>
+      <tr><td>AD-17</td><td>20</td><td>Chọn 2 dòng → Xoá đã chọn → Huỷ, rồi làm lại và Xoá</td><td>Huỷ: không xoá; Xoá: 2 dòng biến mất</td></tr>
+      <tr><td>AD-18</td><td>20</td><td>Bấm tên người chơi</td><td>Hộp chi tiết hiện đủ thông tin</td></tr>
+    </table>
+  </div>
+
   <nav class="pager" aria-label="Chuyển trang">
     <a href="04-quy-tac-du-lieu.html"><small>← Trước</small>Quy tắc &amp; dữ liệu</a>
   </nav>
 </main>
 
-<footer>Tài liệu yêu cầu game Đập Chuột · v1.1 · 17/11/2026 · Chưa có code game.</footer>
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.2 · 17/11/2026 · Chưa có code game.</footer>
 
 </body>
 </html>

@@ -190,13 +190,26 @@
     <li>File mã UTF-8 có BOM để Excel đọc đúng tiếng Việt.</li>
   </ul>
 
+  <h2 id="quan-tri-v12">Bổ sung v1.2 · Quản trị nâng cao</h2>
+  <div class="note accent"><p><strong>Thêm ngày 17/11/2026.</strong> Mở rộng CN-13 → CN-16; nội dung v1.1 ở trên giữ nguyên.</p></div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Mã</th><th>Chức năng</th><th>Mô tả</th></tr>
+      <tr><td>CN-17</td><td>Nhiều tài khoản admin</td><td>Tab "Tài khoản admin": xem danh sách, thêm (tên đăng nhập 3–32 ký tự a-z 0-9 . _ -, tên hiển thị, mật khẩu ≥ 8), xoá. Không xoá được tài khoản đang đăng nhập hay tài khoản cuối cùng; người bị xoá bị đăng xuất ngay. Tài khoản đầu tiên tạo từ <code>ADMIN_USER</code>/<code>ADMIN_PASSWORD</code> trong <code>.env</code> khi bảng còn trống.</td></tr>
+      <tr><td>CN-18</td><td>Đổi mật khẩu</td><td>Góc phải hiện tên hiển thị, "Đổi mật khẩu", "Đăng xuất". Đổi mật khẩu cần mật khẩu hiện tại, mật khẩu mới ≥ 8 ký tự và nhập lại khớp; các phiên khác của tài khoản đó bị đăng xuất.</td></tr>
+      <tr><td>CN-19</td><td>Sắp xếp theo cột</td><td>Bấm tiêu đề cột Họ tên, Email, SĐT, Ngày đăng ký, Số lượt, Điểm cao nhất, Chơi gần nhất để sắp xếp; bấm lần nữa đổi chiều. Mặc định: Ngày đăng ký mới nhất. CSV xuất theo cùng thứ tự.</td></tr>
+      <tr><td>CN-20</td><td>Chọn nhiều &amp; xoá đã chọn</td><td>Ô chọn mỗi dòng và "chọn tất cả"; nút "Xoá đã chọn (n)" chỉ bật khi có dòng được chọn, có hộp xác nhận. Bấm tên người chơi mở hộp chi tiết.</td></tr>
+    </table>
+  </div>
+  <p class="muted">Mật khẩu admin lưu dạng băm scrypt trong bảng <code>quan_tri</code> (id, ten_dang_nhap duy nhất, ten_hien_thi, mat_khau_hash, tao_luc). Ngày giờ trên trang admin hiển thị dạng <code>DD/MM/YYYY HH:mm</code>.</p>
+
   <nav class="pager" aria-label="Chuyển trang">
     <a href="01-tong-quan.html"><small>← Trước</small>Tổng quan</a>
     <a class="next" href="03-man-hinh.html"><small>Tiếp →</small>Màn hình</a>
   </nav>
 </main>
 
-<footer>Tài liệu yêu cầu game Đập Chuột · v1.1 · 17/11/2026 · Chưa có code game.</footer>
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.2 · 17/11/2026 · Chưa có code game.</footer>
 
 </body>
 </html>
