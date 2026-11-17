@@ -1,3 +1,5 @@
+# Mật khẩu và cấu hình nằm trong file .env (không đưa lên GitHub).
+# Lần đầu: chép .env.example thành .env rồi đổi mật khẩu.
 services:
   app:
     build: .
@@ -6,5 +8,36 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - PORT=3000
+      PORT: 3000
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: ${POSTGRES_USER:?Thiếu POSTGRES_USER trong .env}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Thiếu POSTGRES_PASSWORD trong .env}
+      PGDATABASE: ${POSTGRES_DB:?Thiếu POSTGRES_DB trong .env}
+      ADMIN_USER: ${ADMIN_USER:?Thiếu ADMIN_USER trong .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Thiếu ADMIN_PASSWORD trong .env}
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
+
+  db:
+    image: postgres:17-alpine
+    container_name: dap-chuot-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    # Không mở cổng 5432 ra ngoài: chỉ dịch vụ app truy cập được database
+
+volumes:
+  db-data:

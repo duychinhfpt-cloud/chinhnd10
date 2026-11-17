@@ -31,12 +31,55 @@
     <button id="btnAmThanh" class="nut-kinh" type="button" aria-pressed="false" aria-label="Bật âm thanh" title="Bật/tắt âm thanh">🔇</button>
   </div>
 
+  <!-- ===== 0. MÀN HÌNH ĐĂNG KÝ (CN-10) ===== -->
+  <section id="manDangKy" class="man man-giua" hidden aria-labelledby="dkTieuDe">
+    <form id="formDangKy" class="bang-kinh form-dang-ky" novalidate>
+      <h1 id="dkTieuDe" class="tieu-de">Đăng ký để chơi</h1>
+      <p class="mo-ta">Nhập thông tin một lần, lần sau vào chơi ngay.</p>
+
+      <div class="truong">
+        <label for="dkHoTen">Họ tên</label>
+        <input id="dkHoTen" name="hoTen" class="o-nhap" autocomplete="name" maxlength="60" required
+               aria-describedby="loiHoTen">
+        <span id="loiHoTen" class="loi-truong" data-loi="hoTen"></span>
+      </div>
+      <div class="truong">
+        <label for="dkEmail">Email</label>
+        <input id="dkEmail" name="email" type="email" class="o-nhap" autocomplete="email" maxlength="254"
+               inputmode="email" required aria-describedby="loiEmail">
+        <span id="loiEmail" class="loi-truong" data-loi="email"></span>
+      </div>
+      <div class="truong">
+        <label for="dkSdt">Số điện thoại</label>
+        <input id="dkSdt" name="soDienThoai" type="tel" class="o-nhap" autocomplete="tel" maxlength="20"
+               inputmode="tel" required aria-describedby="loiSdt">
+        <span id="loiSdt" class="loi-truong" data-loi="soDienThoai"></span>
+      </div>
+
+      <div class="truong">
+        <label class="dong-y">
+          <input id="dkDongY" name="dongY" type="checkbox" aria-describedby="loiDongY">
+          <span>Tôi đồng ý cho lưu họ tên, email, số điện thoại để quản lý người chơi.</span>
+        </label>
+        <span id="loiDongY" class="loi-truong" data-loi="dongY"></span>
+        <details class="chi-tiet">
+          <summary>Chi tiết</summary>
+          <p>Thông tin được lưu trên máy chủ của game để quản lý danh sách người chơi và điểm cao nhất. Chỉ quản trị viên xem được. Bạn có thể nhờ quản trị viên xoá thông tin bất cứ lúc nào.</p>
+        </details>
+      </div>
+
+      <div id="dkLoiChung" class="loi-chung" role="alert" hidden></div>
+      <button id="btnDangKy" class="btn btn-primary btn-lg rong" type="submit">Đăng ký &amp; chơi</button>
+    </form>
+  </section>
+
   <!-- ===== 1. MÀN HÌNH BẮT ĐẦU ===== -->
   <section id="manBatDau" class="man man-giua" aria-labelledby="tieuDe">
     <div class="bang-kinh">
       <span class="eyebrow">Mini game · 30 giây</span>
       <h1 id="tieuDe" class="tieu-de">Đập Chuột</h1>
       <p class="mo-ta">Đập trúng chuột trong 30 giây, mỗi con được 1 điểm.</p>
+      <p class="xin-chao" id="xinChao" hidden>Xin chào, <strong id="tenNguoiChoi"></strong> · <button id="btnDoiNguoi" class="lien-ket" type="button">Không phải bạn?</button></p>
 
       <div class="hang-the hai">
         <div class="the-kinh"><div class="nhan">Kỷ lục</div><div class="so" id="bdKyLuc">—</div></div>

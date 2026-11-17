@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Người chơi · Quản trị Đập Chuột</title>
+<link rel="stylesheet" href="/design/tokens.css">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+<header class="thanh-tren">
+  <div class="trong">
+    <div class="thuong-hieu">Đập <span>Chuột</span><small>Quản trị</small></div>
+    <div class="phai">
+      <a class="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener">Mở game ↗</a>
+      <button id="btnDangXuat" class="btn btn-secondary btn-sm" type="button">Đăng xuất</button>
+    </div>
+  </div>
+</header>
+
+<main class="danh-sach">
+  <div class="cong-cu">
+    <div class="o-tim">
+      <label for="tim" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Tìm kiếm</label>
+      <input id="tim" class="input" type="search" placeholder="Tìm theo tên, email, số điện thoại" autocomplete="off">
+    </div>
+    <span class="dem" id="dem" aria-live="polite">—</span>
+    <a id="btnCsv" class="btn btn-primary" href="/api/admin/nguoi-choi.csv">⬇ Xuất CSV</a>
+  </div>
+
+  <div class="bang-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Họ tên</th><th>Email</th><th>Số điện thoại</th>
+          <th class="so">Điểm cao nhất</th><th class="so">Số lượt</th>
+          <th>Lần chơi cuối</th><th>Đăng ký lúc</th><th><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Thao tác</span></th>
+        </tr>
+      </thead>
+      <tbody id="than"><tr class="trong-rong"><td colspan="8">Đang tải…</td></tr></tbody>
+    </table>
+  </div>
+</main>
+
+<dialog id="hopXoa">
+  <h2>Xoá người chơi?</h2>
+  <p id="hopXoaChu"></p>
+  <div class="hang-nut">
+    <button id="btnHuy" class="btn btn-ghost" type="button">Huỷ</button>
+    <button id="btnXacNhanXoa" class="btn btn-danger-solid" type="button">Xoá</button>
+  </div>
+</dialog>
+
+<div id="thongBao" class="thong-bao" role="status" hidden></div>
+
+<script src="/admin/admin.js"></script>
+</body>
+</html>

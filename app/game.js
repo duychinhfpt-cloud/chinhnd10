@@ -29,6 +29,7 @@ const KHOA = {
   kyLuc: 'dapChuot.kyLuc',
   comboKyLuc: 'dapChuot.comboKyLuc',
   amThanh: 'dapChuot.amThanh',
+  nguoiChoi: 'dapChuot.nguoiChoi',   // v1.1: { ma, hoTen } — CN-11
 };
 
 /* ---------- Truy cập phần tử ---------- */
@@ -48,6 +49,10 @@ const el = {
   kqCombo: $('kqCombo'), kqComboKL: $('kqComboKL'),
   vungDoc: $('vungDoc'), goLoi: $('goLoi'), tuyet: $('tuyet'),
   mauNhanVat: $('mauNhanVat'),
+  // v1.1 · đăng ký
+  manDangKy: $('manDangKy'), formDangKy: $('formDangKy'), btnDangKy: $('btnDangKy'),
+  dkLoiChung: $('dkLoiChung'), xinChao: $('xinChao'), tenNguoiChoi: $('tenNguoiChoi'),
+  btnDoiNguoi: $('btnDoiNguoi'),
 };
 
 /* ---------- Lưu trữ (localStorage, có bọc lỗi) ---------- */
@@ -176,6 +181,7 @@ const khoaBang = (khoa) => el.bang.classList.toggle('khoa', khoa);
 
 /* ---------- Chuyển màn hình ---------- */
 function hienMan(ten) {
+  el.manDangKy.hidden = ten !== 'dangKy';
   el.manBatDau.hidden = ten !== 'batDau';
   el.manChoi.hidden = ten !== 'choi';
   el.manKetQua.hidden = ten !== 'ketQua';
@@ -187,6 +193,8 @@ function veManBatDau() {
   g = taoLuotMoi();
   el.bdKyLuc.textContent = hienSo(luu.kyLuc);
   el.bdComboKyLuc.textContent = hienSo(luu.comboKyLuc);
+  el.xinChao.hidden = !nguoiChoi;
+  if (nguoiChoi) el.tenNguoiChoi.textContent = nguoiChoi.hoTen;
   hienMan('batDau');
   el.btnBatDau.focus();
   veGoLoi();
@@ -429,6 +437,7 @@ function hienKetQua() {
   el.kqComboKL.textContent = hienSo(luu.comboKyLuc);
 
   hienMan('ketQua');
+  guiDiemLenServer(g.diem);                      // CN-12
   el.vungDoc.textContent = `Hết giờ. Bạn được ${g.diem} điểm.`;
   el.btnChoiLai.focus();
   veGoLoi();
@@ -466,6 +475,8 @@ el.btnAmThanh.addEventListener('click', () => {
 });
 
 document.addEventListener('keydown', (e) => {
+  if (e.target.closest && e.target.closest('input, textarea, select, form')) return;   // đang gõ trong form
+  if (g.trangThai === 'cho' && !el.manDangKy.hidden) return;
   const k = e.key.toLowerCase();
   if (k === 'd' && !e.ctrlKey && !e.metaKey) { batGoLoi = !batGoLoi; veGoLoi(); return; }
   if ((k === 'p' || k === 'escape') && g.trangThai === 'dangChoi') { datTamDung(!g.tamDung); return; }
@@ -477,6 +488,140 @@ document.addEventListener('keydown', (e) => {
 // Quay lại tab: tính lại ngay (đồng hồ vẫn chạy khi tab ẩn, trừ khi đang tạm dừng)
 document.addEventListener('visibilitychange', () => { if (!document.hidden) nhip(performance.now()); });
 
+/* =====================================================================
+   v1.1 · Đăng ký người chơi (CN-10), nhớ trên máy (CN-11), gửi điểm (CN-12)
+   Theo docs/02-chuc-nang.html#dang-ky và docs/04-quy-tac-du-lieu.html#dang-ky
+   ===================================================================== */
+let nguoiChoi = docNguoiChoi();
+
+function docNguoiChoi() {
+  try {
+    const v = JSON.parse(localStorage.getItem(KHOA.nguoiChoi) || 'null');
+    return v && typeof v.ma === 'string' && typeof v.hoTen === 'string' ? v : null;
+  } catch { return null; }
+}
+function luuNguoiChoi(v) {
+  nguoiChoi = v;
+  try {
+    if (v) localStorage.setItem(KHOA.nguoiChoi, JSON.stringify(v));
+    else localStorage.removeItem(KHOA.nguoiChoi);
+  } catch { /* trình duyệt chặn: chỉ nhớ trong phiên này */ }
+}
+
+// Kiểm tra phía trình duyệt — chỉ để báo lỗi nhanh, server kiểm tra lại
+const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
+function chuanHoaSdt(v) {
+  let s = v.replace(/[\s.\-()]/g, '');
+  if (s.startsWith('+84')) s = '0' + s.slice(3);
+  else if (s.startsWith('84') && s.length === 11) s = '0' + s.slice(2);
+  return s;
+}
+function kiemTraForm(d) {
+  const loi = {};
+  const ten = d.hoTen.trim().replace(/\s+/g, ' ');
+  if ([...ten].length < 2 || [...ten].length > 60 || /[<>]/.test(ten)) loi.hoTen = 'Nhập họ tên (2–60 ký tự)';
+  if (!EMAIL_RE.test(d.email.trim())) loi.email = 'Email không đúng định dạng';
+  if (!/^0[35789]\d{8}$/.test(chuanHoaSdt(d.soDienThoai))) loi.soDienThoai = 'Số điện thoại không đúng (10 số, bắt đầu bằng 0)';
+  if (!d.dongY) loi.dongY = 'Bạn cần đồng ý để đăng ký';
+  return loi;
+}
+
+function hienLoi(loi, loiChung) {
+  const f = el.formDangKy;
+  for (const span of f.querySelectorAll('[data-loi]')) {
+    const truong = span.dataset.loi;
+    span.textContent = loi[truong] || '';
+    f.elements[truong].setAttribute('aria-invalid', loi[truong] ? 'true' : 'false');
+  }
+  el.dkLoiChung.textContent = loiChung || '';
+  el.dkLoiChung.hidden = !loiChung;
+  const dauTien = ['hoTen', 'email', 'soDienThoai', 'dongY'].find((t) => loi[t]);
+  if (dauTien) f.elements[dauTien].focus();
+}
+
+function veManDangKy() {
+  huyTatCa();
+  g = taoLuotMoi();
+  hienLoi({}, '');
+  hienMan('dangKy');
+  el.formDangKy.elements.hoTen.focus();
+  veGoLoi();
+}
+
+let dangGui = false;
+el.formDangKy.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (dangGui) return;
+  const f = el.formDangKy.elements;
+  const duLieu = {
+    hoTen: f.hoTen.value, email: f.email.value,
+    soDienThoai: f.soDienThoai.value, dongY: f.dongY.checked,
+  };
+  const loi = kiemTraForm(duLieu);
+  if (Object.keys(loi).length) { hienLoi(loi, ''); return; }
+
+  dangGui = true;
+  el.btnDangKy.disabled = true;
+  el.btnDangKy.textContent = 'Đang đăng ký…';
+  try {
+    const r = await fetch('/api/dang-ky', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(duLieu),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 201 && d.ma) {
+      luuNguoiChoi({ ma: d.ma, hoTen: d.hoTen });
+      el.formDangKy.reset();
+      veManBatDau();
+    } else if (d.loi) {
+      hienLoi(d.loi, '');
+    } else {
+      hienLoi({}, d.loiChung || 'Đăng ký không thành công, thử lại sau');
+    }
+  } catch {
+    hienLoi({}, 'Không kết nối được máy chủ, thử lại sau');
+  } finally {
+    dangGui = false;
+    el.btnDangKy.disabled = false;
+    el.btnDangKy.textContent = 'Đăng ký & chơi';
+  }
+});
+
+// Sửa ô nào thì xoá lỗi của ô đó
+el.formDangKy.addEventListener('input', (e) => {
+  const t = e.target.name;
+  const span = t && el.formDangKy.querySelector(`[data-loi="${t}"]`);
+  if (span && span.textContent) { span.textContent = ''; e.target.setAttribute('aria-invalid', 'false'); }
+  el.dkLoiChung.hidden = true;
+});
+
+el.btnDoiNguoi.addEventListener('click', () => { luuNguoiChoi(null); veManDangKy(); });
+
+async function guiDiemLenServer(diem) {
+  if (!nguoiChoi) return;
+  try {
+    const r = await fetch('/api/diem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${nguoiChoi.ma}` },
+      body: JSON.stringify({ diem }),
+    });
+    if (r.status === 401) luuNguoiChoi(null);    // đã bị admin xoá: lần sau phải đăng ký lại
+  } catch { /* mất mạng: bỏ qua, không làm gián đoạn game */ }
+}
+
 /* ---------- Khởi động ---------- */
-capNhatNutLoa();
-veManBatDau();
+async function khoiDong() {
+  capNhatNutLoa();
+  if (!nguoiChoi) return veManDangKy();
+  try {
+    const r = await fetch('/api/toi', { headers: { Authorization: `Bearer ${nguoiChoi.ma}` } });
+    if (r.status === 401) { luuNguoiChoi(null); return veManDangKy(); }
+    if (r.ok) {
+      const d = await r.json();
+      luuNguoiChoi({ ma: nguoiChoi.ma, hoTen: d.hoTen });
+    }
+  } catch { /* máy chủ tạm không trả lời: vẫn cho người đã đăng ký vào chơi */ }
+  veManBatDau();
+}
+khoiDong();

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Đăng nhập · Quản trị Đập Chuột</title>
+<link rel="stylesheet" href="/design/tokens.css">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+<main class="trang-dang-nhap">
+  <form id="form" class="the-dang-nhap" novalidate>
+    <div>
+      <div class="eyebrow">Quản trị</div>
+      <h1>Đập Chuột</h1>
+    </div>
+    <div class="field">
+      <label for="tenDangNhap">Tên đăng nhập</label>
+      <input id="tenDangNhap" class="input" name="tenDangNhap" autocomplete="username" required autofocus>
+    </div>
+    <div class="field">
+      <label for="matKhau">Mật khẩu</label>
+      <input id="matKhau" class="input" name="matKhau" type="password" autocomplete="current-password" required>
+    </div>
+    <div id="loi" class="bao-loi" role="alert" hidden></div>
+    <button id="nut" class="btn btn-primary rong" type="submit">Đăng nhập</button>
+  </form>
+</main>
+<script src="/admin/dang-nhap.js"></script>
+</body>
+</html>
