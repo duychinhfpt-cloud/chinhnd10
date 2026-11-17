@@ -117,13 +117,86 @@
     <li>Lựa chọn bật/tắt được nhớ trong <code>localStorage</code>.</li>
   </ul>
 
+  <h2 id="dang-ky">Bổ sung v1.1 · Đăng ký người chơi &amp; trang admin</h2>
+  <div class="note accent">
+    <p><strong>Thêm ngày 17/11/2026.</strong> Người chơi phải đăng ký (họ tên, email, số điện thoại) trước khi chơi. Dữ liệu lưu vào database PostgreSQL trên server. Có trang admin để xem, tìm kiếm, xoá và xuất CSV. Các chức năng CN-01 → CN-09 ở trên giữ nguyên.</p>
+    <p>Quyết định sau phỏng vấn: số điện thoại theo định dạng Việt Nam và không trùng · lưu điểm cao nhất của từng người lên server · trình duyệt nhớ người chơi, lần sau vào chơi ngay.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Mã</th><th>Chức năng</th><th>Ưu tiên</th></tr>
+      <tr><td>CN-10</td><td>Đăng ký người chơi trước khi chơi</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-11</td><td>Nhớ người chơi trên máy</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-12</td><td>Lưu điểm cao nhất lên server</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-13</td><td>Đăng nhập trang admin</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-14</td><td>Xem &amp; tìm kiếm người chơi</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-15</td><td>Xoá người chơi</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+      <tr><td>CN-16</td><td>Xuất danh sách ra file CSV</td><td><span class="badge accent">Bắt buộc</span></td></tr>
+    </table>
+  </div>
+
+  <h3>CN-10 · Đăng ký người chơi</h3>
+  <ul>
+    <li>Lần đầu mở game (chưa có người chơi lưu trên máy) hiện <strong>màn hình đăng ký</strong> thay cho màn hình bắt đầu.</li>
+    <li>Nhập: <strong>Họ tên</strong>, <strong>Email</strong>, <strong>Số điện thoại</strong>, tick ô <strong>đồng ý lưu thông tin</strong>. Cả 4 đều bắt buộc.</li>
+    <li>Trình duyệt kiểm tra trước để báo lỗi nhanh; <strong>server kiểm tra lại</strong> (định dạng email, số điện thoại, email và số điện thoại không trùng). Kết quả của server là cuối cùng.</li>
+    <li>Lỗi hiện ngay dưới ô tương ứng, ô lỗi có viền đỏ; dữ liệu đã nhập được giữ nguyên.</li>
+    <li>Trùng email hoặc số điện thoại: báo "Email này đã được đăng ký" / "Số điện thoại này đã được đăng ký".</li>
+    <li>Bấm "Đăng ký &amp; chơi" thành công: lưu người chơi trên máy (CN-11) và vào màn hình bắt đầu với lời chào "Xin chào, &lt;tên&gt;".</li>
+    <li>Không kết nối được server: báo "Không kết nối được máy chủ, thử lại sau"; không cho chơi khi chưa đăng ký.</li>
+  </ul>
+
+  <h3>CN-11 · Nhớ người chơi trên máy</h3>
+  <ul>
+    <li>Đăng ký xong, server trả về một <strong>mã người chơi</strong> ngẫu nhiên; trình duyệt lưu mã và tên trong <code>localStorage</code>.</li>
+    <li>Lần sau mở game: kiểm tra mã với server rồi vào thẳng màn hình bắt đầu, không phải đăng ký lại.</li>
+    <li>Nếu admin đã xoá người chơi (server báo mã không còn hợp lệ): xoá mã trên máy và hiện lại màn hình đăng ký.</li>
+    <li>Màn hình bắt đầu có liên kết <strong>"Không phải bạn?"</strong>: xoá người chơi khỏi máy (không xoá trên server) và quay lại màn hình đăng ký.</li>
+    <li>Máy khác cần đăng ký lại; email/số điện thoại đã có sẽ bị báo trùng.</li>
+  </ul>
+
+  <h3>CN-12 · Lưu điểm lên server</h3>
+  <ul>
+    <li>Mỗi khi hết lượt, game gửi điểm của lượt lên server kèm mã người chơi.</li>
+    <li>Server cập nhật: <strong>điểm cao nhất</strong> (chỉ khi điểm mới lớn hơn), <strong>số lượt chơi</strong> +1, <strong>lần chơi cuối</strong> = thời điểm hiện tại.</li>
+    <li>Gửi lỗi (mất mạng) không làm gián đoạn game; kỷ lục trên máy (CN-08) vẫn hoạt động như cũ.</li>
+  </ul>
+
+  <h3>CN-13 · Đăng nhập trang admin</h3>
+  <ul>
+    <li>Trang admin ở địa chỉ <code>/admin</code>. Chưa đăng nhập thì chỉ thấy form đăng nhập, không thấy dữ liệu.</li>
+    <li>Một tài khoản admin; tên đăng nhập và mật khẩu đặt trong file <code>.env</code> trên server (không đưa lên GitHub).</li>
+    <li>Sai thông tin: báo "Sai tên đăng nhập hoặc mật khẩu". Sai quá 5 lần trong 1 phút: tạm khoá 1 phút.</li>
+    <li>Phiên đăng nhập giữ 8 giờ; có nút <strong>Đăng xuất</strong>.</li>
+  </ul>
+
+  <h3>CN-14 · Xem &amp; tìm kiếm</h3>
+  <ul>
+    <li>Bảng người chơi, mới nhất ở trên: họ tên, email, số điện thoại, điểm cao nhất, số lượt, lần chơi cuối, thời điểm đăng ký.</li>
+    <li>Ô tìm kiếm: tìm theo một phần họ tên, email hoặc số điện thoại, không phân biệt hoa thường; kết quả cập nhật khi gõ.</li>
+    <li>Hiện tổng số người chơi khớp tìm kiếm.</li>
+  </ul>
+
+  <h3>CN-15 · Xoá người chơi</h3>
+  <ul>
+    <li>Mỗi dòng có nút <strong>Xoá</strong>. Bấm thì hiện hộp xác nhận ghi rõ tên và email.</li>
+    <li>Xác nhận: xoá hẳn khỏi database (không khôi phục được), dòng biến mất khỏi bảng.</li>
+  </ul>
+
+  <h3>CN-16 · Xuất CSV</h3>
+  <ul>
+    <li>Nút <strong>Xuất CSV</strong> tải file <code>nguoi-choi-YYYYMMDD-HHmm.csv</code> gồm các người chơi đang hiển thị (theo ô tìm kiếm).</li>
+    <li>File mã UTF-8 có BOM để Excel đọc đúng tiếng Việt.</li>
+  </ul>
+
   <nav class="pager" aria-label="Chuyển trang">
     <a href="01-tong-quan.html"><small>← Trước</small>Tổng quan</a>
     <a class="next" href="03-man-hinh.html"><small>Tiếp →</small>Màn hình</a>
   </nav>
 </main>
 
-<footer>Tài liệu yêu cầu game Đập Chuột · v1.0 · 13/11/2026 · Chưa có code game.</footer>
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.1 · 17/11/2026 · Chưa có code game.</footer>
 
 </body>
 </html>

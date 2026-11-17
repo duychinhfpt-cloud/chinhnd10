@@ -101,12 +101,65 @@ Mong đợi:   Điểm +1
 Thực tế:    Điểm +2
 Ảnh/clip:   (đính kèm)</div>
 
+  <h2 id="dang-ky">Bổ sung v1.1 · Test đăng ký &amp; admin</h2>
+  <div class="note accent">
+    <p><strong>Thêm ngày 17/11/2026</strong> cho CN-10 → CN-16. Chạy bằng <code>docker compose up -d --build</code>, mở <code>http://localhost:3000</code> và <code>http://localhost:3000/admin</code>. Các ca T-xx, G-xx ở trên vẫn áp dụng.</p>
+  </div>
+
+  <h3>Đăng ký &amp; nhớ người chơi</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Mã</th><th>CN</th><th>Bước</th><th>Kết quả mong đợi</th></tr>
+      <tr><td>DK-01</td><td>10</td><td>Mở game lần đầu (xoá localStorage)</td><td>Hiện màn hình đăng ký, không vào được màn hình bắt đầu</td></tr>
+      <tr><td>DK-02</td><td>10</td><td>Bấm "Đăng ký &amp; chơi" khi để trống tất cả</td><td>Cả 4 lỗi hiện dưới từng ô; không gửi lên server</td></tr>
+      <tr><td>DK-03</td><td>10</td><td>Email <code>abc@</code>, <code>abc.com</code>, <code>a b@c.vn</code></td><td>"Email không đúng định dạng"</td></tr>
+      <tr><td>DK-04</td><td>10</td><td>SĐT <code>12345</code>, <code>0212345678</code>, <code>091234567</code></td><td>"Số điện thoại không đúng…"</td></tr>
+      <tr><td>DK-05</td><td>10</td><td>SĐT <code>+84 912 345 678</code></td><td>Hợp lệ, lưu thành <code>0912345678</code></td></tr>
+      <tr><td>DK-06</td><td>10</td><td>Gọi thẳng API (bỏ qua trình duyệt) với email sai</td><td>400 kèm lỗi email: server tự kiểm tra</td></tr>
+      <tr><td>DK-07</td><td>10</td><td>Đăng ký hợp lệ</td><td>Vào màn hình bắt đầu, có "Xin chào, &lt;tên&gt;"; dòng mới xuất hiện trong admin</td></tr>
+      <tr><td>DK-08</td><td>10</td><td>Đăng ký lại cùng email (viết hoa khác)</td><td>"Email này đã được đăng ký"</td></tr>
+      <tr><td>DK-09</td><td>10</td><td>Đăng ký lại cùng SĐT (viết kiểu khác, ví dụ +84)</td><td>"Số điện thoại này đã được đăng ký"</td></tr>
+      <tr><td>DK-10</td><td>11</td><td>Tải lại trang sau khi đăng ký</td><td>Vào thẳng màn hình bắt đầu</td></tr>
+      <tr><td>DK-11</td><td>11</td><td>Bấm "Không phải bạn?"</td><td>Về màn hình đăng ký; dữ liệu trên server không đổi</td></tr>
+      <tr><td>DK-12</td><td>11</td><td>Admin xoá người chơi, người đó tải lại game</td><td>Hiện lại màn hình đăng ký</td></tr>
+      <tr><td>DK-13</td><td>12</td><td>Chơi 2 lượt được 5 rồi 3 điểm</td><td>Admin thấy điểm cao nhất 5, số lượt 2, lần chơi cuối cập nhật</td></tr>
+      <tr><td>DK-14</td><td>10</td><td>Dừng dịch vụ app, bấm đăng ký</td><td>Báo không kết nối được máy chủ, không vào game</td></tr>
+      <tr><td>DK-15</td><td>—</td><td><code>docker compose down</code> rồi <code>up</code> lại</td><td>Dữ liệu người chơi vẫn còn (volume)</td></tr>
+    </table>
+  </div>
+
+  <h3>Trang admin</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Mã</th><th>CN</th><th>Bước</th><th>Kết quả mong đợi</th></tr>
+      <tr><td>AD-01</td><td>13</td><td>Mở <code>/admin</code> chưa đăng nhập</td><td>Chỉ thấy form đăng nhập; gọi <code>/api/admin/nguoi-choi</code> trả 401</td></tr>
+      <tr><td>AD-02</td><td>13</td><td>Đăng nhập sai</td><td>"Sai tên đăng nhập hoặc mật khẩu"</td></tr>
+      <tr><td>AD-03</td><td>13</td><td>Sai 6 lần liên tiếp</td><td>Lần thứ 6 bị khoá tạm (429)</td></tr>
+      <tr><td>AD-04</td><td>13</td><td>Đăng nhập đúng (theo <code>.env</code>)</td><td>Thấy bảng người chơi</td></tr>
+      <tr><td>AD-05</td><td>14</td><td>Gõ một phần tên / email / SĐT</td><td>Bảng lọc đúng, số đếm đúng</td></tr>
+      <tr><td>AD-06</td><td>14</td><td>Tìm với ký tự đặc biệt <code>%</code>, <code>_</code>, <code>'</code></td><td>Không lỗi, không trả về tất cả</td></tr>
+      <tr><td>AD-07</td><td>15</td><td>Bấm Xoá rồi Huỷ</td><td>Không xoá</td></tr>
+      <tr><td>AD-08</td><td>15</td><td>Bấm Xoá rồi xác nhận</td><td>Dòng biến mất; tải lại vẫn không còn</td></tr>
+      <tr><td>AD-09</td><td>16</td><td>Bấm Xuất CSV khi đang tìm kiếm</td><td>File chỉ gồm người chơi khớp; mở Excel đúng tiếng Việt</td></tr>
+      <tr><td>AD-10</td><td>16</td><td>Đăng ký tên bắt đầu bằng <code>=</code> rồi xuất CSV</td><td>Ô trong CSV bắt đầu bằng <code>'=</code></td></tr>
+      <tr><td>AD-11</td><td>13</td><td>Bấm Đăng xuất rồi tải lại</td><td>Về form đăng nhập</td></tr>
+    </table>
+  </div>
+
+  <h3>Tiêu chí hoàn thành bổ sung</h3>
+  <ul class="checklist">
+    <li>DK-01 → DK-15 và AD-01 → AD-11 đều qua.</li>
+    <li><code>docker compose up -d --build</code> chạy được với một file <code>.env</code> chép từ <code>.env.example</code>; log của <code>app</code> và <code>db</code> không có lỗi.</li>
+    <li><code>.env</code> không có trên GitHub; <code>.env.example</code> không chứa mật khẩu thật.</li>
+    <li>Các ca T-01 → T-22 cũ vẫn qua sau khi đã đăng ký.</li>
+  </ul>
+
   <nav class="pager" aria-label="Chuyển trang">
     <a href="04-quy-tac-du-lieu.html"><small>← Trước</small>Quy tắc &amp; dữ liệu</a>
   </nav>
 </main>
 
-<footer>Tài liệu yêu cầu game Đập Chuột · v1.0 · 13/11/2026 · Chưa có code game.</footer>
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.1 · 17/11/2026 · Chưa có code game.</footer>
 
 </body>
 </html>

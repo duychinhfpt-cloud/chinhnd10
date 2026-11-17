@@ -125,13 +125,93 @@ const GIAY_CANH_BAO = 5;</div>
     <li>Chọn ngẫu nhiên đều 1 trong 8 ô còn lại bằng <code>Math.random()</code>.</li>
   </ol>
 
+  <h2 id="dang-ky">Bổ sung v1.1 · Dữ liệu người chơi</h2>
+  <div class="note accent">
+    <p><strong>Thêm ngày 17/11/2026</strong> cho CN-10 → CN-16. Dữ liệu một lượt và <code>localStorage</code> ở trên giữ nguyên, thêm 1 khoá mới.</p>
+  </div>
+
+  <h3>Kiến trúc</h3>
+  <div class="screen">Trình duyệt ──HTTP──> app (Node.js, cổng 3000) ──SQL──> db (PostgreSQL 17)
+                                                       └─ dữ liệu trong volume "db-data"</div>
+  <ul>
+    <li>Chạy bằng Docker Compose: 2 dịch vụ <code>app</code> và <code>db</code>. <code>app</code> chỉ khởi động khi <code>db</code> sẵn sàng.</li>
+    <li>Bảng được tạo tự động khi <code>app</code> khởi động lần đầu.</li>
+  </ul>
+
+  <h3>Bảng <code>nguoi_choi</code></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Cột</th><th>Kiểu</th><th>Ràng buộc</th><th>Ghi chú</th></tr>
+      <tr><td><code>id</code></td><td>bigint</td><td>khoá chính, tự tăng</td><td></td></tr>
+      <tr><td><code>ho_ten</code></td><td>text</td><td>không rỗng</td><td>đã bỏ khoảng trắng thừa</td></tr>
+      <tr><td><code>email</code></td><td>text</td><td><strong>duy nhất</strong></td><td>lưu chữ thường</td></tr>
+      <tr><td><code>so_dien_thoai</code></td><td>text</td><td><strong>duy nhất</strong></td><td>lưu dạng <code>0xxxxxxxxx</code></td></tr>
+      <tr><td><code>dong_y</code></td><td>boolean</td><td>phải là true</td><td>đã đồng ý lưu thông tin</td></tr>
+      <tr><td><code>ma_hash</code></td><td>text</td><td>duy nhất</td><td>SHA-256 của mã người chơi; không lưu mã gốc</td></tr>
+      <tr><td><code>diem_cao_nhat</code></td><td>integer</td><td>≥ 0, mặc định 0</td><td></td></tr>
+      <tr><td><code>so_luot</code></td><td>integer</td><td>≥ 0, mặc định 0</td><td></td></tr>
+      <tr><td><code>lan_choi_cuoi</code></td><td>timestamptz</td><td>có thể trống</td><td></td></tr>
+      <tr><td><code>dang_ky_luc</code></td><td>timestamptz</td><td>mặc định now()</td><td></td></tr>
+    </table>
+  </div>
+
+  <h3>Quy tắc kiểm tra (server)</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Trường</th><th>Chuẩn hoá</th><th>Hợp lệ khi</th><th>Báo lỗi</th></tr>
+      <tr><td>Họ tên</td><td>bỏ khoảng trắng đầu/cuối, gộp khoảng trắng</td><td>2 – 60 ký tự, không chứa <code>&lt; &gt;</code></td><td>"Nhập họ tên (2–60 ký tự)"</td></tr>
+      <tr><td>Email</td><td>bỏ khoảng trắng, chữ thường</td><td>dạng <code>ten@mien.tld</code>, tối đa 254 ký tự, không trùng</td><td>"Email không đúng định dạng" / "Email này đã được đăng ký"</td></tr>
+      <tr><td>Số điện thoại</td><td>bỏ dấu cách, chấm, gạch; <code>+84</code>/<code>84</code> đầu → <code>0</code></td><td>10 số, dạng <code>0[35789]xxxxxxxx</code>, không trùng</td><td>"Số điện thoại không đúng (10 số, bắt đầu bằng 0)" / "Số điện thoại này đã được đăng ký"</td></tr>
+      <tr><td>Đồng ý</td><td></td><td>bằng <code>true</code></td><td>"Bạn cần đồng ý để đăng ký"</td></tr>
+      <tr><td>Điểm (CN-12)</td><td></td><td>số nguyên 0 – 200</td><td>400</td></tr>
+    </table>
+  </div>
+  <p class="muted">Kiểm tra trùng dựa vào ràng buộc <em>duy nhất</em> của database nên đúng cả khi 2 người gửi cùng lúc.</p>
+
+  <h3>API</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Phương thức · Đường dẫn</th><th>Dùng cho</th><th>Kết quả</th></tr>
+      <tr><td><code>POST /api/dang-ky</code></td><td>CN-10. Body JSON <code>{hoTen, email, soDienThoai, dongY}</code></td><td>201 <code>{ma, hoTen}</code> · 400 <code>{loi: {truong: thông báo}}</code> · 409 trùng · 429 gửi quá nhiều</td></tr>
+      <tr><td><code>GET /api/toi</code></td><td>CN-11. Header <code>Authorization: Bearer &lt;ma&gt;</code></td><td>200 <code>{hoTen, diemCaoNhat}</code> · 401 mã không hợp lệ</td></tr>
+      <tr><td><code>POST /api/diem</code></td><td>CN-12. Bearer + <code>{diem}</code></td><td>200 <code>{diemCaoNhat, soLuot}</code> · 400 · 401</td></tr>
+      <tr><td><code>POST /api/admin/dang-nhap</code></td><td>CN-13. <code>{tenDangNhap, matKhau}</code></td><td>200 + cookie phiên · 401 · 429</td></tr>
+      <tr><td><code>POST /api/admin/dang-xuat</code></td><td>CN-13</td><td>204</td></tr>
+      <tr><td><code>GET /api/admin/nguoi-choi?q=</code></td><td>CN-14</td><td>200 <code>{tong, nguoiChoi: [...]}</code> · 401</td></tr>
+      <tr><td><code>DELETE /api/admin/nguoi-choi/:id</code></td><td>CN-15</td><td>204 · 404 · 401</td></tr>
+      <tr><td><code>GET /api/admin/nguoi-choi.csv?q=</code></td><td>CN-16</td><td>file CSV · 401</td></tr>
+    </table>
+  </div>
+
+  <h3>Bảo mật &amp; cấu hình</h3>
+  <ul>
+    <li>Mật khẩu database và tài khoản admin đặt trong <code>.env</code> (có trong <code>.gitignore</code>). Mẫu ở <code>.env.example</code>.</li>
+    <li>Phiên admin: cookie <code>HttpOnly</code>, <code>SameSite=Strict</code>, hết hạn sau 8 giờ, lưu trong bộ nhớ server (khởi động lại server thì phải đăng nhập lại).</li>
+    <li>Mọi truy vấn SQL dùng tham số (<code>$1, $2…</code>), không ghép chuỗi.</li>
+    <li>Body tối đa 10 KB. Đăng ký tối đa 10 lần/phút mỗi IP.</li>
+    <li>CSV: ô bắt đầu bằng <code>= + - @</code> được thêm <code>'</code> phía trước để Excel không chạy như công thức.</li>
+  </ul>
+
+  <h3>File CSV</h3>
+  <div class="screen">ID,Họ tên,Email,Số điện thoại,Điểm cao nhất,Số lượt,Lần chơi cuối,Đăng ký lúc
+12,Nguyễn Văn A,a@example.com,0912345678,27,5,2026-11-17 16:20,2026-11-17 16:02</div>
+  <p class="muted">Thời gian theo giờ Việt Nam (Asia/Ho_Chi_Minh).</p>
+
+  <h3>Khoá <code>localStorage</code> mới</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Khoá</th><th>Kiểu</th><th>Ý nghĩa</th></tr>
+      <tr><td><code>dapChuot.nguoiChoi</code></td><td>JSON <code>{ma, hoTen}</code></td><td>Người chơi đã đăng ký trên máy này (CN-11)</td></tr>
+    </table>
+  </div>
+
   <nav class="pager" aria-label="Chuyển trang">
     <a href="03-man-hinh.html"><small>← Trước</small>Màn hình</a>
     <a class="next" href="05-ke-hoach-test.html"><small>Tiếp →</small>Kế hoạch test</a>
   </nav>
 </main>
 
-<footer>Tài liệu yêu cầu game Đập Chuột · v1.0 · 13/11/2026 · Chưa có code game.</footer>
+<footer>Tài liệu yêu cầu game Đập Chuột · v1.1 · 17/11/2026 · Chưa có code game.</footer>
 
 </body>
 </html>
