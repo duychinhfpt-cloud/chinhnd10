@@ -1,10 +1,15 @@
-// Kết nối PostgreSQL. Thông tin kết nối lấy từ biến môi trường chuẩn của pg:
-// PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE (đặt trong compose.yaml / .env).
+// Kết nối PostgreSQL.
+// - Docker Compose: dùng biến chuẩn của pg (PGHOST, PGUSER, PGPASSWORD, PGDATABASE).
+// - Máy chủ online (Render…): dùng DATABASE_URL nếu có (postgres://user:pass@host:5432/db).
 'use strict';
 
 const { Pool } = require('pg');
 
-const pool = new Pool({ max: 10, idleTimeoutMillis: 30_000 });
+const pool = new Pool({
+  ...(process.env.DATABASE_URL ? { connectionString: process.env.DATABASE_URL } : {}),
+  max: 10,
+  idleTimeoutMillis: 30_000,
+});
 pool.on('error', (err) => console.error('[db] lỗi kết nối nền:', err.message));
 
 const SCHEMA = `

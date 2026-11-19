@@ -1,0 +1,25 @@
+# Cấu hình triển khai lên Render.com (New → Blueprint → chọn repo này).
+# Tạo 1 dịch vụ web chạy Dockerfile + 1 database PostgreSQL, gói miễn phí.
+services:
+  - type: web
+    name: dap-chuot
+    runtime: docker
+    plan: free
+    region: singapore
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dap-chuot-db
+          property: connectionString
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false          # Render sẽ hỏi bạn nhập khi tạo (tối thiểu 8 ký tự)
+
+databases:
+  - name: dap-chuot-db
+    plan: free
+    region: singapore
+    databaseName: dapchuot
+    user: dapchuot

@@ -66,6 +66,21 @@ Sửa code xong thì chạy lại bước 3 để build bản mới. Muốn xoá
 - `Thiếu POSTGRES_USER trong .env` (hoặc biến khác): chưa tạo file `.env`, xem bước 2.
 - Trang admin không đăng nhập được: kiểm tra `ADMIN_PASSWORD` trong `.env` có ít nhất 8 ký tự, sửa xong chạy lại bước 3.
 
+## Đưa lên Internet với tên miền riêng (Render.com, miễn phí)
+
+Repo có sẵn `render.yaml`: Render tự tạo dịch vụ web (chạy `Dockerfile`) và database PostgreSQL.
+
+1. Vào https://render.com, bấm **Get Started**, đăng nhập bằng **GitHub** (tài khoản sở hữu repo này).
+2. Bấm **New +** → **Blueprint** → chọn repo này → **Connect**.
+3. Render hỏi `ADMIN_PASSWORD`: nhập mật khẩu admin (tối thiểu 8 ký tự) → **Apply**. Chờ 3–5 phút đến khi dịch vụ `dap-chuot` báo **Live**; game chạy ở địa chỉ `https://dap-chuot-xxxx.onrender.com`.
+4. Gắn tên miền: mở dịch vụ `dap-chuot` → **Settings** → **Custom Domains** → **Add Custom Domain** → nhập tên miền (ví dụ `vf3.io.vn`), làm thêm một lần với `www.vf3.io.vn`.
+5. Vào trang quản lý DNS của nhà cung cấp tên miền, thêm đúng các bản ghi Render hiển thị, thường là:
+   - `A` · tên `@` · giá trị `216.24.57.1`
+   - `CNAME` · tên `www` · giá trị `dap-chuot-xxxx.onrender.com`
+6. Quay lại Render bấm **Verify**. Khi xong, Render tự cấp HTTPS; mở `https://vf3.io.vn` để chơi, `https://vf3.io.vn/admin` để quản trị (đăng nhập `admin` / mật khẩu bước 3).
+
+Lưu ý gói miễn phí: dịch vụ web "ngủ" sau 15 phút không có người vào, lần mở đầu tiên sau đó chờ khoảng 1 phút. Database miễn phí của Render có thời hạn; hết hạn cần nâng gói hoặc chuyển sang database khác (chỉ cần đổi biến `DATABASE_URL`).
+
 ## Chạy không cần Docker
 
 Từ v1.1 game cần server và database để đăng ký người chơi, nên mở thẳng file `app/index.html` sẽ dừng ở màn hình đăng ký. Hãy chạy bằng Docker như trên.
